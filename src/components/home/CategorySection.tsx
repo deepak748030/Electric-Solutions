@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import CategoryCard from '@/components/common/CategoryCard';
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { ChevronRight } from 'lucide-react';
 
 const categories = [
   {
@@ -30,6 +32,20 @@ const categories = [
     image: '/public/lovable-uploads/ff5f5a21-0a54-4f89-9c38-f454c9379861.png',
     iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
     servicesCount: '1+ Services'
+  },
+  {
+    id: 5,
+    title: 'Refrigerator Repair',
+    image: '/public/lovable-uploads/5a0f916a-7a99-4eb3-b204-8fc666f610fc.png',
+    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
+    servicesCount: '1+ Services'
+  },
+  {
+    id: 6,
+    title: 'Washing Machine Repair',
+    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
+    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
+    servicesCount: '1+ Services'
   }
 ];
 
@@ -46,8 +62,9 @@ const CategorySection = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((category, index) => (
+        {/* Desktop View */}
+        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {categories.slice(0, 4).map((category, index) => (
             <CategoryCard
               key={category.id}
               title={category.title}
@@ -60,21 +77,34 @@ const CategorySection = () => {
           ))}
         </div>
         
-        <div className="flex justify-center mt-12">
-          <div className="flex space-x-2">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  activeSlide === index 
-                    ? 'bg-brand-blue w-8' 
-                    : 'bg-gray-300 hover:bg-gray-400'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
+        {/* Mobile Carousel */}
+        <div className="md:hidden">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {categories.map((category) => (
+                <CarouselItem key={category.id} className="md:basis-1/2 lg:basis-1/3">
+                  <CategoryCard
+                    title={category.title}
+                    image={category.image}
+                    iconImage={category.iconImage}
+                    servicesCount={category.servicesCount}
+                    className="animate-fade-in"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-end mt-4">
+              <CarouselPrevious className="relative static mx-2 top-auto right-auto translate-y-0" />
+              <CarouselNext className="relative static mx-2 top-auto left-auto translate-y-0" />
+            </div>
+          </Carousel>
+        </div>
+        
+        <div className="mt-12 text-center">
+          <a href="/categories" className="inline-flex items-center text-brand-blue hover:text-brand-darkBlue font-medium transition-colors group">
+            View All Categories
+            <ChevronRight className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" />
+          </a>
         </div>
       </div>
     </section>

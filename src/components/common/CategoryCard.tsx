@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { ArrowRight } from 'lucide-react';
 
 type CategoryCardProps = {
   title: string;
@@ -22,7 +23,7 @@ const CategoryCard = ({
   return (
     <div 
       className={cn(
-        'bg-white rounded-lg overflow-hidden card-shadow group transition-all duration-500 hover-scale',
+        'bg-white rounded-lg overflow-hidden card-shadow group transition-all duration-500 hover:shadow-xl',
         className
       )}
       style={style}
@@ -31,17 +32,20 @@ const CategoryCard = ({
         <img 
           src={image} 
           alt={title} 
-          className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-          <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 w-20 h-20 flex items-center justify-center group-hover:scale-110 transition-transform">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-center justify-center">
+          <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 w-20 h-20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-lg">
             <img src={iconImage} alt={`${title} icon`} className="w-10 h-10" />
           </div>
         </div>
       </div>
-      <div className="p-4 text-center">
-        <h3 className="text-lg font-semibold mb-1">{title}</h3>
-        <p className="text-sm text-gray-600">{servicesCount}</p>
+      <div className="p-5 text-center">
+        <h3 className="text-lg font-semibold mb-1 group-hover:text-brand-blue transition-colors">{title}</h3>
+        <p className="text-sm text-gray-600 mb-3">{servicesCount}</p>
+        <a href="#" className="inline-flex items-center text-brand-blue font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          View Details <ArrowRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </a>
       </div>
     </div>
   );
