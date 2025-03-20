@@ -3,7 +3,6 @@ import React from 'react';
 import StarRating from '@/components/ui/StarRating';
 import Button from '@/components/common/Button';
 import { cn } from '@/lib/utils';
-import { Clock, Check } from 'lucide-react';
 
 type ServiceCardProps = {
   title: string;
@@ -31,7 +30,7 @@ const ServiceCard = ({
   style
 }: ServiceCardProps) => {
   return (
-    <div 
+    <div
       className={cn(
         'bg-white rounded-lg overflow-hidden card-shadow transition-all duration-300 hover:shadow-xl',
         className
@@ -39,10 +38,10 @@ const ServiceCard = ({
       style={style}
     >
       <div className="relative w-full h-48 overflow-hidden">
-        <img 
-          src={image} 
-          alt={title} 
-          className="w-full h-full object-cover transition-transform hover:scale-110 duration-700" 
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover transition-transform hover:scale-110 duration-700"
         />
         <div className="absolute top-4 right-4 bg-brand-blue text-white text-xs font-medium px-2 py-1 rounded">
           Featured
@@ -56,27 +55,17 @@ const ServiceCard = ({
           {category}
         </div>
         <h3 className="text-lg font-semibold mb-3 hover:text-brand-blue transition-colors">{title}</h3>
-        
+
         <div className="flex items-center space-x-2 mb-4">
           <img src={providerImage} alt={providerName} className="w-8 h-8 rounded-full border-2 border-white shadow-sm" />
           <span className="text-sm text-gray-600">{providerName}</span>
         </div>
-        
+
         <div className="flex items-center justify-between mb-4">
           <StarRating rating={rating} reviews={reviews} />
         </div>
-        
-        <div className="grid grid-cols-2 gap-2 mb-4 text-xs">
-          <div className="flex items-center text-gray-600">
-            <Clock className="w-3 h-3 mr-1 text-brand-blue" />
-            <span>60 min</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <Check className="w-3 h-3 mr-1 text-green-500" />
-            <span>Verified</span>
-          </div>
-        </div>
-        
+
+
         <Button fullWidth className="transition-transform hover:translate-y-[-3px]">Book Now</Button>
       </div>
     </div>

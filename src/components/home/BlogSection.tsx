@@ -53,15 +53,15 @@ const BlogSection = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [carouselApi, setCarouselApi] = useState<any>(null);
   const isMobile = useIsMobile();
-  
+
   // Update active slide when carousel changes
   useEffect(() => {
     if (!carouselApi) return;
-    
+
     const handleSelect = () => {
       setActiveSlide(carouselApi.selectedScrollSnap());
     };
-    
+
     carouselApi.on("select", handleSelect);
     return () => {
       carouselApi.off("select", handleSelect);
@@ -73,7 +73,7 @@ const BlogSection = () => {
     if (!carouselApi) return;
     carouselApi.scrollTo(activeSlide);
   }, [activeSlide, carouselApi]);
-  
+
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
       <div className="container mx-auto px-4">
@@ -84,19 +84,19 @@ const BlogSection = () => {
           </p>
           <div className="h-1 w-16 bg-brand-blue mx-auto mt-5 rounded-full"></div>
         </div>
-        
+
         <div className="max-w-6xl mx-auto relative">
-          <Carousel 
+          <Carousel
             className="w-full"
             setApi={setCarouselApi}
-            opts={{ 
+            opts={{
               align: "start",
               loop: true,
             }}
           >
             <CarouselContent className="-ml-4">
               {blogs.map((blog) => (
-                <CarouselItem 
+                <CarouselItem
                   key={blog.id}
                   className={`pl-4 ${isMobile ? 'basis-full' : 'basis-1/2 md:basis-1/3'}`}
                 >
@@ -113,48 +113,43 @@ const BlogSection = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            
+
             {/* Custom Navigation Buttons */}
             <div className="hidden md:flex items-center justify-between absolute top-1/2 left-0 right-0 -translate-y-1/2 z-10 pointer-events-none">
-              <Button 
-                onClick={() => carouselApi?.scrollPrev()} 
-                variant="outline" 
-                size="icon" 
+              <Button
+                onClick={() => carouselApi?.scrollPrev()}
+                variant="outline"
+                size="icon"
                 className="rounded-full w-12 h-12 shadow-md pointer-events-auto transform -translate-x-6 bg-white/80 backdrop-blur-sm hover:bg-white"
               >
                 <ChevronLeft className="w-6 h-6" />
               </Button>
-              <Button 
-                onClick={() => carouselApi?.scrollNext()} 
-                variant="outline" 
-                size="icon" 
+              <Button
+                onClick={() => carouselApi?.scrollNext()}
+                variant="outline"
+                size="icon"
                 className="rounded-full w-12 h-12 shadow-md pointer-events-auto transform translate-x-6 bg-white/80 backdrop-blur-sm hover:bg-white"
               >
                 <ChevronRight className="w-6 h-6" />
               </Button>
             </div>
           </Carousel>
-          
+
           {/* Carousel Navigation Dots */}
           <div className="flex justify-center mt-8">
             {Array.from({ length: Math.ceil(blogs.length / (isMobile ? 1 : 3)) }).map((_, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 rounded-full mx-1.5 transition-all duration-300 ${
-                  activeSlide === index ? "bg-brand-blue w-6" : "bg-gray-300"
-                }`}
+                className={`w-3 h-3 rounded-full mx-1.5 transition-all duration-300 ${activeSlide === index ? "bg-brand-blue w-6" : "bg-gray-300"
+                  }`}
                 onClick={() => setActiveSlide(index)}
                 aria-label={`Go to blog page ${index + 1}`}
               />
             ))}
           </div>
         </div>
-        
-        <div className="mt-12 text-center">
-          <Button variant="outline" className="group px-6 py-7 rounded-full shadow-md hover:shadow-lg">
-            View All Articles <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </div>
+
+
       </div>
     </section>
   );

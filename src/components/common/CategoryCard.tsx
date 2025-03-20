@@ -21,7 +21,7 @@ const CategoryCard = ({
   style
 }: CategoryCardProps) => {
   return (
-    <div 
+    <div
       className={cn(
         'bg-white rounded-lg overflow-hidden card-shadow group transition-all duration-500 hover:shadow-xl',
         className
@@ -29,9 +29,9 @@ const CategoryCard = ({
       style={style}
     >
       <div className="relative h-56 w-full overflow-hidden">
-        <img 
-          src={image} 
-          alt={title} 
+        <img
+          src={image}
+          alt={title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent flex items-center justify-center">
@@ -43,9 +43,6 @@ const CategoryCard = ({
       <div className="p-5 text-center">
         <h3 className="text-lg font-semibold mb-1 group-hover:text-brand-blue transition-colors">{title}</h3>
         <p className="text-sm text-gray-600 mb-3">{servicesCount}</p>
-        <a href="#" className="inline-flex items-center text-brand-blue font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          View Details <ArrowRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </a>
       </div>
     </div>
   );
