@@ -8,6 +8,7 @@ type CategoryCardProps = {
   iconImage: string;
   servicesCount: string;
   className?: string;
+  style?: React.CSSProperties;
 };
 
 const CategoryCard = ({
@@ -15,13 +16,17 @@ const CategoryCard = ({
   image,
   iconImage,
   servicesCount,
-  className
+  className,
+  style
 }: CategoryCardProps) => {
   return (
-    <div className={cn(
-      'bg-white rounded-lg overflow-hidden card-shadow group transition-all duration-500 hover-scale',
-      className
-    )}>
+    <div 
+      className={cn(
+        'bg-white rounded-lg overflow-hidden card-shadow group transition-all duration-500 hover-scale',
+        className
+      )}
+      style={style}
+    >
       <div className="relative h-56 w-full overflow-hidden">
         <img 
           src={image} 

@@ -14,6 +14,7 @@ type ServiceCardProps = {
   rating: number;
   reviews: number;
   className?: string;
+  style?: React.CSSProperties;
 };
 
 const ServiceCard = ({
@@ -25,13 +26,17 @@ const ServiceCard = ({
   providerImage,
   rating,
   reviews,
-  className
+  className,
+  style
 }: ServiceCardProps) => {
   return (
-    <div className={cn(
-      'bg-white rounded-lg overflow-hidden card-shadow animate-fade-in',
-      className
-    )}>
+    <div 
+      className={cn(
+        'bg-white rounded-lg overflow-hidden card-shadow animate-fade-in',
+        className
+      )}
+      style={style}
+    >
       <div className="relative w-full h-48 overflow-hidden">
         <img 
           src={image} 

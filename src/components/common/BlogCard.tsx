@@ -9,6 +9,7 @@ type BlogCardProps = {
   author: string;
   commentsCount: string;
   className?: string;
+  style?: React.CSSProperties;
 };
 
 const BlogCard = ({
@@ -16,13 +17,17 @@ const BlogCard = ({
   image,
   author,
   commentsCount,
-  className
+  className,
+  style
 }: BlogCardProps) => {
   return (
-    <div className={cn(
-      'bg-white rounded-lg overflow-hidden card-shadow group hover-scale',
-      className
-    )}>
+    <div 
+      className={cn(
+        'bg-white rounded-lg overflow-hidden card-shadow group hover-scale',
+        className
+      )}
+      style={style}
+    >
       <div className="relative h-48 overflow-hidden">
         <img 
           src={image} 
