@@ -34,7 +34,7 @@ const CategoryCard = ({
           alt={title} 
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent flex items-center justify-center">
           <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 w-20 h-20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-lg">
             <img src={iconImage} alt={`${title} icon`} className="w-10 h-10" />
           </div>

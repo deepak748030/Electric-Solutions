@@ -1,191 +1,134 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowUp, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Button from '@/components/common/Button';
+import { ArrowUp, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Footer = () => {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-gray-800 text-white pt-16 pb-8 relative overflow-hidden">
-      {/* Abstract shape background */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-5">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-brand-blue"></div>
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 rounded-full bg-white"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-80 h-80 rounded-full bg-brand-blue"></div>
+    <footer className="bg-gray-900 text-white relative">
+      {/* Top Wave Design */}
+      <div className="absolute top-0 left-0 w-full overflow-hidden leading-0 transform -translate-y-1/2">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-16 text-gray-900 fill-current">
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+        </svg>
       </div>
 
+      {/* Scroll to Top Button */}
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
-          {/* Company Info */}
-          <div className="animate-fade-in space-y-6">
-            <Link to="/" className="inline-block mb-4">
-              <img src="/public/lovable-uploads/f4ff55b6-3170-4526-9347-e8eb769d7e87.png" alt="logo" className="h-12" />
-            </Link>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              profoundexpert.com: Your Trusted Home Appliance Repair Partner. In today's fast-paced world, home appliances play a vital role in making our lives easier and more comfortable.
+        <div className="flex justify-center">
+          <Button 
+            onClick={scrollToTop}
+            className="bg-brand-blue hover:bg-brand-darkBlue text-white rounded-full p-3 transform -translate-y-1/2 shadow-lg hover:shadow-xl transition-all"
+          >
+            <ArrowUp size={24} />
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-4 pt-6 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* About Section */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">About Us</h3>
+            <p className="text-gray-300">
+              We provide expert repair services for your home appliances and electronics, 
+              committed to quality service with trained professionals.
             </p>
-            <div className="flex space-x-3">
-              <a href="#" className="bg-gray-800 hover:bg-brand-blue transition-colors duration-300 p-2.5 rounded-full group">
-                <Facebook className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <div className="flex space-x-4 pt-4">
+              <a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">
+                <Facebook size={20} />
               </a>
-              <a href="#" className="bg-gray-800 hover:bg-brand-blue transition-colors duration-300 p-2.5 rounded-full group">
-                <Twitter className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">
+                <Twitter size={20} />
               </a>
-              <a href="#" className="bg-gray-800 hover:bg-brand-blue transition-colors duration-300 p-2.5 rounded-full group">
-                <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">
+                <Instagram size={20} />
               </a>
-              <a href="#" className="bg-gray-800 hover:bg-brand-blue transition-colors duration-300 p-2.5 rounded-full group">
-                <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">
+                <Linkedin size={20} />
               </a>
             </div>
           </div>
 
-          {/* Important Links */}
-          <div className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            <h3 className="text-xl font-semibold mb-5 relative inline-block after:content-[''] after:absolute after:w-12 after:h-1 after:bg-brand-blue after:bottom-0 after:left-0 after:-mb-2">
-              Important Links
-            </h3>
-            <ul className="space-y-3 mt-6">
-              {[
-                { name: 'Contact Us', path: '/contact' },
-                { name: 'Our Blog', path: '/blog' },
-                { name: 'FAQ', path: '/faq' },
-                { name: 'Terms And Conditions', path: '/terms' },
-                { name: 'Privacy Policy', path: '/privacy' }
-              ].map((link, index) => (
-                <li key={index} className="transform transition hover:translate-x-1">
-                  <Link to={link.path} className="text-gray-300 hover:text-white flex items-center group">
-                    <ChevronRight className="w-4 h-4 mr-2 text-brand-blue group-hover:translate-x-1 transition-transform" />
-                    <span>{link.name}</span>
-                  </Link>
-                </li>
-              ))}
+          {/* Quick Links */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Quick Links</h3>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Home</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Services</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">About Us</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Contact</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Blog</a></li>
             </ul>
           </div>
 
-          {/* Quick Links */}
-          <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <h3 className="text-xl font-semibold mb-5 relative inline-block after:content-[''] after:absolute after:w-12 after:h-1 after:bg-brand-blue after:bottom-0 after:left-0 after:-mb-2">
-              Quick Links
-            </h3>
-            <ul className="space-y-3 mt-6">
-              {[
-                { name: 'Our Services', path: '/services' },
-                { name: 'Why Choose Us', path: '/why-choose-us' },
-                { name: 'My Profile', path: '/profile' },
-                { name: 'About Us', path: '/about' },
-                { name: 'Join as a Provider', path: '/join' }
-              ].map((link, index) => (
-                <li key={index} className="transform transition hover:translate-x-1">
-                  <Link to={link.path} className="text-gray-300 hover:text-white flex items-center group">
-                    <ChevronRight className="w-4 h-4 mr-2 text-brand-blue group-hover:translate-x-1 transition-transform" />
-                    <span>{link.name}</span>
-                  </Link>
-                </li>
-              ))}
+          {/* Services */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Our Services</h3>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Air Conditioner Repair</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Refrigerator Repair</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Washing Machine Repair</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">Microwave Repair</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-brand-blue transition-colors">TV Repair</a></li>
             </ul>
           </div>
 
           {/* Contact Info */}
-          <div className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <h3 className="text-xl font-semibold mb-5 relative inline-block after:content-[''] after:absolute after:w-12 after:h-1 after:bg-brand-blue after:bottom-0 after:left-0 after:-mb-2">
-              Contact Info
-            </h3>
-            <ul className="space-y-5 mt-6">
-              <li className="flex items-start group">
-                <div className="bg-gray-800 rounded-full p-2.5 mr-3 mt-0.5 group-hover:bg-brand-blue transition-colors duration-300">
-                  <Phone className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-gray-300 group-hover:text-white transition-colors">+91 7303503894</span>
-              </li>
-              <li className="flex items-start group">
-                <div className="bg-gray-800 rounded-full p-2.5 mr-3 mt-0.5 group-hover:bg-brand-blue transition-colors duration-300">
-                  <Mail className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-gray-300 group-hover:text-white transition-colors break-all">support@profoundexpert.com</span>
-              </li>
-              <li className="flex items-start group">
-                <div className="bg-gray-800 rounded-full p-2.5 mr-3 mt-0.5 group-hover:bg-brand-blue transition-colors duration-300">
-                  <MapPin className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-gray-300 group-hover:text-white transition-colors">
-                  27/4 sector 28, Gurgaon Haryana 122002 India
-                </span>
-              </li>
-            </ul>
-            
-            <div className="mt-6">
-              <Button className="w-full" size="lg">
-                Request A Quote
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Newsletter */}
-        <div className="bg-gray-800 rounded-lg p-6 mb-10 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            <div className="md:col-span-1">
-              <h4 className="text-lg font-semibold">Subscribe to Our Newsletter</h4>
-              <p className="text-gray-300 text-sm mt-1">Get the latest updates and offers</p>
-            </div>
-            <div className="md:col-span-2">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  className="flex-grow bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue"
-                />
-                <Button size="lg">Subscribe</Button>
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Contact Us</h3>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3">
+                <MapPin className="text-brand-blue shrink-0 mt-1" size={18} />
+                <p className="text-gray-300">123 Repair Street, Fix City, FC 12345</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Phone className="text-brand-blue shrink-0" size={18} />
+                <p className="text-gray-300">+1 (555) 123-4567</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Mail className="text-brand-blue shrink-0" size={18} />
+                <p className="text-gray-300">support@repairbuddy.com</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Footer */}
-        <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm mb-6 md:mb-0">
-            Copyright © {currentYear}, Profound Expert. All Rights Reserved.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <img src="https://cdn-icons-png.flaticon.com/512/196/196566.png" alt="PayPal" className="h-8 w-auto bg-white p-1 rounded" />
-            <img src="https://cdn-icons-png.flaticon.com/512/196/196561.png" alt="Mastercard" className="h-8 w-auto bg-white p-1 rounded" />
-            <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Visa" className="h-8 w-auto bg-white p-1 rounded" />
-            <img src="https://cdn-icons-png.flaticon.com/512/196/196546.png" alt="AmEx" className="h-8 w-auto bg-white p-1 rounded" />
-            <img src="https://cdn-icons-png.flaticon.com/512/196/196565.png" alt="Discover" className="h-8 w-auto bg-white p-1 rounded" />
+        {/* Newsletter */}
+        <div className="mt-12 border-t border-gray-700 pt-8">
+          <div className="max-w-xl mx-auto text-center">
+            <h3 className="text-xl font-bold mb-4">Subscribe to Our Newsletter</h3>
+            <p className="text-gray-300 mb-4">Stay updated with our latest services and offers</p>
+            <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+              <input 
+                type="email" 
+                placeholder="Your email address" 
+                className="px-4 py-2 rounded-md flex-grow bg-gray-800 border border-gray-700 text-white"
+              />
+              <Button className="bg-brand-blue hover:bg-brand-darkBlue text-white">
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="text-center mt-12 text-gray-400 text-sm">
+          <p>© {new Date().getFullYear()} Repair Buddy. All rights reserved.</p>
+          <div className="flex justify-center gap-4 mt-2">
+            <a href="#" className="hover:text-brand-blue transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-brand-blue transition-colors">Terms of Service</a>
           </div>
         </div>
       </div>
-
-      {/* Scroll to top button */}
-      <button 
-        onClick={scrollToTop}
-        className={cn(
-          "fixed bottom-6 right-6 bg-brand-blue text-white p-3 rounded-full shadow-lg hover:bg-brand-darkBlue transition-colors z-40",
-          "transform hover:scale-110 transition-transform duration-300"
-        )}
-        aria-label="Scroll to top"
-      >
-        <ArrowUp className="w-5 h-5" />
-      </button>
-
-      {/* Live Chat Button */}
-      <button className={cn(
-        "fixed bottom-6 left-6 bg-brand-blue text-white py-2 px-4 rounded-lg shadow-lg hover:bg-brand-darkBlue transition-colors z-40 flex items-center",
-        "transform hover:scale-105 transition-transform duration-300"
-      )}>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
-        </svg>
-        Live Chat
-      </button>
     </footer>
   );
 };

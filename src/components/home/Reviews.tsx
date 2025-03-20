@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import ReviewCard from '@/components/common/ReviewCard';
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 const reviews = [
   {
@@ -42,6 +42,8 @@ const reviews = [
 ];
 
 const Reviews = () => {
+  const [activeSlide, setActiveSlide] = useState(0);
+  
   return (
     <section className="py-16 bg-gray-100">
       <div className="container mx-auto px-4">
@@ -68,8 +70,8 @@ const Reviews = () => {
           ))}
         </div>
         
-        {/* Mobile & Tablet - Carousel */}
-        <div className="md:hidden">
+        {/* Mobile - Carousel */}
+        <div className="md:hidden max-w-xl mx-auto">
           <Carousel className="w-full">
             <CarouselContent>
               {reviews.map((review) => (
@@ -80,17 +82,27 @@ const Reviews = () => {
                       authorName={review.authorName}
                       authorImage={review.authorImage}
                       authorTitle={review.authorTitle}
-                      className="animate-fade-in"
+                      className="animate-fade-in h-full"
                     />
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-center mt-6">
-              <CarouselPrevious className="relative static mx-2 top-auto right-auto translate-y-0" />
-              <CarouselNext className="relative static mx-2 top-auto left-auto translate-y-0" />
-            </div>
           </Carousel>
+          
+          {/* Carousel Navigation Dots */}
+          <div className="flex justify-center mt-8">
+            {reviews.map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-3 rounded-full mx-1 transition-all duration-300 ${
+                  activeSlide === index ? "bg-brand-blue" : "bg-gray-300"
+                }`}
+                onClick={() => setActiveSlide(index)}
+                aria-label={`Go to testimonial ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

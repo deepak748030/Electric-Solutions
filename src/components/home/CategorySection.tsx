@@ -1,35 +1,36 @@
 
 import React, { useState } from 'react';
 import CategoryCard from '@/components/common/CategoryCard';
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { ChevronRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 const categories = [
   {
     id: 1,
-    title: 'Microwave Repair',
-    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 2,
     title: 'Air Conditioner Repair',
     image: '/public/lovable-uploads/5a0f916a-7a99-4eb3-b204-8fc666f610fc.png',
     iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
     servicesCount: '1+ Services'
   },
   {
-    id: 3,
+    id: 2,
     title: 'Air Purifier',
     image: '/public/lovable-uploads/57758589-e6a5-40ce-96c9-f4b63dff38b8.png',
     iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
     servicesCount: '1+ Services'
   },
   {
-    id: 4,
+    id: 3,
     title: 'Car Detailing',
     image: '/public/lovable-uploads/ff5f5a21-0a54-4f89-9c38-f454c9379861.png',
+    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
+    servicesCount: '1+ Services'
+  },
+  {
+    id: 4,
+    title: 'Car Repair',
+    image: '/public/lovable-uploads/5a0f916a-7a99-4eb3-b204-8fc666f610fc.png',
     iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
     servicesCount: '1+ Services'
   },
@@ -43,6 +44,27 @@ const categories = [
   {
     id: 6,
     title: 'Washing Machine Repair',
+    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
+    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
+    servicesCount: '1+ Services'
+  },
+  {
+    id: 7,
+    title: 'TV Repair',
+    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
+    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
+    servicesCount: '1+ Services'
+  },
+  {
+    id: 8,
+    title: 'Plumbing Services',
+    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
+    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
+    servicesCount: '1+ Services'
+  },
+  {
+    id: 9,
+    title: 'Electrician Services',
     image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
     iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
     servicesCount: '1+ Services'
@@ -63,7 +85,7 @@ const CategorySection = () => {
         </div>
         
         {/* Desktop View */}
-        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="hidden lg:grid grid-cols-4 gap-6 max-w-6xl mx-auto">
           {categories.slice(0, 4).map((category, index) => (
             <CategoryCard
               key={category.id}
@@ -77,27 +99,39 @@ const CategorySection = () => {
           ))}
         </div>
         
-        {/* Mobile Carousel */}
-        <div className="md:hidden">
-          <Carousel className="w-full">
+        {/* Tablet & Mobile Carousel */}
+        <div className="lg:hidden">
+          <Carousel className="w-full max-w-5xl mx-auto">
             <CarouselContent>
               {categories.map((category) => (
-                <CarouselItem key={category.id} className="md:basis-1/2 lg:basis-1/3">
-                  <CategoryCard
-                    title={category.title}
-                    image={category.image}
-                    iconImage={category.iconImage}
-                    servicesCount={category.servicesCount}
-                    className="animate-fade-in"
-                  />
+                <CarouselItem key={category.id} className="md:basis-1/2 sm:basis-1/1">
+                  <div className="p-1">
+                    <CategoryCard
+                      title={category.title}
+                      image={category.image}
+                      iconImage={category.iconImage}
+                      servicesCount={category.servicesCount}
+                      className="animate-fade-in h-full"
+                    />
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-end mt-4">
-              <CarouselPrevious className="relative static mx-2 top-auto right-auto translate-y-0" />
-              <CarouselNext className="relative static mx-2 top-auto left-auto translate-y-0" />
-            </div>
           </Carousel>
+          
+          {/* Carousel Navigation Dots */}
+          <div className="flex justify-center mt-8">
+            {categories.map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-3 rounded-full mx-1 transition-all duration-300 ${
+                  activeSlide === index ? "bg-brand-blue" : "bg-gray-300"
+                }`}
+                onClick={() => setActiveSlide(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
         
         <div className="mt-12 text-center">
