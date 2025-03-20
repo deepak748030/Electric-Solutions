@@ -8,6 +8,7 @@ type ReviewCardProps = {
   authorImage: string;
   authorTitle: string;
   className?: string;
+  style?: React.CSSProperties;
 };
 
 const ReviewCard = ({
@@ -15,13 +16,17 @@ const ReviewCard = ({
   authorName,
   authorImage,
   authorTitle,
-  className
+  className,
+  style
 }: ReviewCardProps) => {
   return (
-    <div className={cn(
-      'bg-white rounded-lg p-6 card-shadow animate-fade-in',
-      className
-    )}>
+    <div 
+      className={cn(
+        'bg-white rounded-lg p-6 card-shadow animate-fade-in',
+        className
+      )}
+      style={style}
+    >
       <div className="mb-4">
         <p className="text-gray-700">{content}</p>
       </div>
