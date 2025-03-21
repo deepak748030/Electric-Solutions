@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, MapPin, Phone, Star, Check } from 'lucide-react';
 import Button from '@/components/common/Button';
-import { 
+import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
@@ -13,14 +13,15 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage
 } from '@/components/ui/breadcrumb';
+import Reviews from '@/components/home/Reviews';
 
 const About = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       {/* Breadcrumb Banner */}
-      <div className="bg-gray-800 py-12 mb-8 mt-16">
+      <div className="bg-gray-800 py-24 mt-20">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">About Us</h1>
           <Breadcrumb className="justify-center">
@@ -38,22 +39,22 @@ const About = () => {
           </Breadcrumb>
         </div>
       </div>
-      
+
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-blue-50 to-white py-16 md:py-24">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
               <div className="order-2 md:order-1 animate-fade-in">
-                <h1 className="text-4xl md:text-5xl font-bold mb-6">About Us</h1>
+                {/* <h1 className="text-4xl md:text-5xl font-bold mb-6">About Us</h1> */}
                 <h2 className="text-xl md:text-2xl text-brand-blue font-semibold mb-4">
                   RepairingBuddy.com: Your Trusted Home Appliance Repair Partner
                 </h2>
                 <p className="text-gray-700 mb-6">
-                  In today's fast-paced world, home appliances play a vital role in making our lives easier 
-                  and more comfortable. Whether it's the refrigerator that keeps our food fresh, the washing 
-                  machine that saves us time and effort, or the air conditioner that keeps us cool during 
-                  scorching summers – these appliances are indispensable to modern living. However, just 
+                  In today's fast-paced world, home appliances play a vital role in making our lives easier
+                  and more comfortable. Whether it's the refrigerator that keeps our food fresh, the washing
+                  machine that saves us time and effort, or the air conditioner that keeps us cool during
+                  scorching summers – these appliances are indispensable to modern living. However, just
                   like any other machine, they can break down unexpectedly, leaving us in distress.
                 </p>
                 <div className="flex gap-4">
@@ -66,10 +67,10 @@ const About = () => {
               </div>
               <div className="order-1 md:order-2 flex justify-center">
                 <div className="relative">
-                  <img 
-                    src="/public/lovable-uploads/d2bdb4e4-28b6-4d6d-97ae-1f356bc7cd37.png" 
-                    alt="About RepairingBuddy" 
-                    className="rounded-lg shadow-xl max-w-full h-auto" 
+                  <img
+                    src="/public/lovable-uploads/d2bdb4e4-28b6-4d6d-97ae-1f356bc7cd37.png"
+                    alt="About RepairingBuddy"
+                    className="rounded-lg shadow-xl max-w-full h-auto"
                   />
                   <div className="absolute -bottom-6 -left-6 bg-white rounded-lg shadow-lg p-4 flex items-center gap-2">
                     <div className="bg-brand-blue rounded-full p-2 text-white">
@@ -99,14 +100,14 @@ const About = () => {
               <h2 className="text-3xl md:text-4xl font-bold mb-6">How It Works</h2>
               <div className="w-20 h-1 bg-brand-blue mx-auto"></div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Step 1 */}
               <div className="flex flex-col items-center text-center p-6 rounded-lg transition-all duration-300 hover:shadow-xl">
                 <div className="bg-brand-blue rounded-full p-8 mb-6">
-                  <img 
-                    src="/public/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png" 
-                    alt="Book a Service" 
+                  <img
+                    src="/public/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png"
+                    alt="Book a Service"
                     className="w-10 h-10 object-contain"
                   />
                 </div>
@@ -115,13 +116,13 @@ const About = () => {
                   Book a service by Call or WhatsApp and get the service
                 </p>
               </div>
-              
+
               {/* Step 2 */}
               <div className="flex flex-col items-center text-center p-6 rounded-lg transition-all duration-300 hover:shadow-xl">
                 <div className="bg-brand-blue rounded-full p-8 mb-6">
-                  <img 
-                    src="/public/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png" 
-                    alt="Technician Visit" 
+                  <img
+                    src="/public/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png"
+                    alt="Technician Visit"
                     className="w-10 h-10 object-contain"
                   />
                 </div>
@@ -130,13 +131,13 @@ const About = () => {
                   An expert technician will reach your door step within 60 minutes
                 </p>
               </div>
-              
+
               {/* Step 3 */}
               <div className="flex flex-col items-center text-center p-6 rounded-lg transition-all duration-300 hover:shadow-xl">
                 <div className="bg-brand-blue rounded-full p-8 mb-6">
-                  <img 
-                    src="/public/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png" 
-                    alt="Enjoy Service" 
+                  <img
+                    src="/public/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png"
+                    alt="Enjoy Service"
                     className="w-10 h-10 object-contain"
                   />
                 </div>
@@ -165,7 +166,7 @@ const About = () => {
                       <p className="text-gray-600">We understand the urgency – quick fixes, minimal downtime.</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="bg-green-100 p-1 rounded mt-1">
                       <Check className="h-5 w-5 text-green-600" />
@@ -175,7 +176,7 @@ const About = () => {
                       <p className="text-gray-600">Our experts know the ins and outs of all things repairable.</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="bg-green-100 p-1 rounded mt-1">
                       <Check className="h-5 w-5 text-green-600" />
@@ -185,7 +186,7 @@ const About = () => {
                       <p className="text-gray-600">Each repair undergoes rigorous checks for top-notch quality.</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="bg-green-100 p-1 rounded mt-1">
                       <Check className="h-5 w-5 text-green-600" />
@@ -195,7 +196,7 @@ const About = () => {
                       <p className="text-gray-600">No surprises – you'll know the cost before we start.</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="bg-green-100 p-1 rounded mt-1">
                       <Check className="h-5 w-5 text-green-600" />
@@ -215,12 +216,12 @@ const About = () => {
               </div>
 
               <div className="grid grid-cols-1 gap-8">
-                <img 
-                  src="/public/lovable-uploads/4a6ac531-74d9-48b7-bddd-7657fe15a950.png" 
-                  alt="Why Choose RepairingBuddy" 
+                <img
+                  src="/public/lovable-uploads/4a6ac531-74d9-48b7-bddd-7657fe15a950.png"
+                  alt="Why Choose RepairingBuddy"
                   className="rounded-lg shadow-lg w-full max-w-md mx-auto"
                 />
-                
+
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="p-2 rounded-full bg-brand-blue text-white">
@@ -231,7 +232,7 @@ const About = () => {
                       <p className="text-gray-600">We are having highly skilled technicians with years of experience.</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="p-2 rounded-full bg-brand-blue text-white">
                       <Check className="h-5 w-5" />
@@ -241,7 +242,7 @@ const About = () => {
                       <p className="text-gray-600">We keep up with the latest trends and technologies to keep you updated.</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="p-2 rounded-full bg-brand-blue text-white">
                       <Check className="h-5 w-5" />
@@ -255,9 +256,11 @@ const About = () => {
               </div>
             </div>
           </div>
+
         </section>
+        <Reviews />
       </main>
-      
+
       <Footer />
     </div>
   );

@@ -31,19 +31,25 @@ const Navbar = () => {
   ];
 
   return (
-    <header 
+    <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled 
-          ? 'bg-white shadow-md py-2' 
+        isScrolled
+          ? 'bg-white shadow-md py-2'
           : 'bg-transparent py-4'
       )}
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <img src="/public/lovable-uploads/f4ff55b6-3170-4526-9347-e8eb769d7e87.png" alt="logo" className="h-8 md:h-10" />
+          <Link to="/" className="flex items-center space-x-2">
+            {/* <img
+              src="/public/lovable-uploads/f4ff55b6-3170-4526-9347-e8eb769d7e87.png"
+              alt="Repair Guru Logo"
+              className="h-8 md:h-10"
+            /> */}
+            <h1 className="text-2xl md:text-3xl font-bold text-brand-blue">Repair Guru</h1>
           </Link>
+
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -53,8 +59,8 @@ const Navbar = () => {
                 to={link.path}
                 className={cn(
                   'text-base font-medium transition-colors hover:text-brand-blue relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:scale-x-0 after:bg-brand-blue after:transition-transform hover:after:scale-x-100',
-                  location.pathname === link.path 
-                    ? 'text-brand-blue after:scale-x-100' 
+                  location.pathname === link.path
+                    ? 'text-brand-blue after:scale-x-100'
                     : 'text-gray-700'
                 )}
               >
@@ -65,14 +71,14 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <button 
+            <button
               className="p-2 rounded-full bg-brand-blue text-white hover:bg-brand-darkBlue transition-all"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
             <Button variant="primary">Hire Now &rarr;</Button>
-            <button 
+            <button
               className="p-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all"
               aria-label="User profile"
             >
@@ -105,8 +111,8 @@ const Navbar = () => {
                 to={link.path}
                 className={cn(
                   'text-base font-medium p-2 rounded',
-                  location.pathname === link.path 
-                    ? 'bg-brand-blue/10 text-brand-blue' 
+                  location.pathname === link.path
+                    ? 'bg-brand-blue/10 text-brand-blue'
                     : 'text-gray-700 hover:bg-gray-100'
                 )}
               >

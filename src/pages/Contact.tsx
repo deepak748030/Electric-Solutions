@@ -58,7 +58,7 @@ const Contact = () => {
       <Navbar />
 
       {/* Breadcrumb Banner */}
-      <div className="bg-gray-800 py-12 mb-8 mt-16">
+      <div className="bg-gray-800 py-24 mt-20">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">Contact Us</h1>
           <Breadcrumb className="justify-center">
@@ -82,7 +82,7 @@ const Contact = () => {
         <section className="py-12 md:py-20 bg-gradient-to-b from-blue-50 to-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16 animate-fade-in">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
+              {/* <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1> */}
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 We're here to help with all your appliance repair needs. Reach out to us through any of the methods below.
               </p>
@@ -221,7 +221,7 @@ const Contact = () => {
               {/* Support Hours & Map */}
               <div className="lg:col-span-2 flex flex-col gap-6">
                 {/* Support Hours */}
-                <div className="bg-brand-blue text-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+                <div className="bg-brand-blue text-white rounded-lg shadow-lg relative overflow-hidden pt-4">
                   <div className="relative z-10">
                     <div className="flex justify-center mb-4">
                       <User className="h-12 w-12" />
@@ -229,9 +229,9 @@ const Contact = () => {
                     <h3 className="text-xl font-semibold text-center mb-4">Support Time</h3>
                     <p className="text-center text-xl font-bold mb-6">10.00AM to 05.00PM</p>
                     <img
-                      src="/public/lovable-uploads/f92c461d-115f-4313-8200-0c2d00db559b.png"
+                      src="https://services.codemindstudio.in/uploads/website-images/supporter--2022-08-28-02-04-43-1575.jpg"
                       alt="Customer Support"
-                      className="mx-auto rounded-lg"
+                      className="w-full h-auto rounded-lg"
                     />
                   </div>
                 </div>
@@ -242,21 +242,23 @@ const Contact = () => {
 
             </div>
           </div>
-          {/* Map */}
-          <div className="w-full h-[40vh] relative rounded-lg shadow-lg overflow-hidden mt-8">
-            <iframe
-              title="Location Map"
-              src="https://www.google.com/maps?q=New+Delhi,India&output=embed"
-              className="w-full h-full"
-              allowFullScreen
-              loading="lazy"
-            ></iframe>
-          </div>
+
 
 
 
 
         </section>
+        {/* Map */}
+        <div className="w-full h-[30vh] sm:h-[60vh] relative rounded-lg overflow-hidden my-8">
+          <iframe
+            title="Location Map"
+            src="https://www.google.com/maps?q=New+Delhi,India&output=embed"
+            className="w-full h-full"
+            allowFullScreen
+            loading="lazy"
+          ></iframe>
+        </div>
+
       </main>
 
       <Footer />
