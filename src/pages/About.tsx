@@ -1,17 +1,44 @@
-
 import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, MapPin, Phone, Star, Check } from 'lucide-react';
 import Button from '@/components/common/Button';
+import { 
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage
+} from '@/components/ui/breadcrumb';
 
 const About = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24">
+      {/* Breadcrumb Banner */}
+      <div className="bg-gray-800 py-12 mb-8">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">About Us</h1>
+          <Breadcrumb className="justify-center">
+            <BreadcrumbList className="justify-center text-gray-300">
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/" className="text-white hover:text-brand-blue">
+                  Home
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-brand-blue">About Us</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </div>
+      
+      <main className="flex-grow">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-blue-50 to-white py-16 md:py-24">
           <div className="container mx-auto px-4">

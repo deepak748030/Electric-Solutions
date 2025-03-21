@@ -6,6 +6,15 @@ import { MapPin, Phone, Mail, Clock, Send, User } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import Button from '@/components/common/Button';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage
+} from '@/components/ui/breadcrumb';
 
 const Contact = () => {
   const { toast } = useToast();
@@ -48,7 +57,27 @@ const Contact = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24">
+      {/* Breadcrumb Banner */}
+      <div className="bg-gray-800 py-12 mb-8">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">Contact Us</h1>
+          <Breadcrumb className="justify-center">
+            <BreadcrumbList className="justify-center text-gray-300">
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/" className="text-white hover:text-brand-blue">
+                  Home
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-brand-blue">Contact Us</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </div>
+      
+      <main className="flex-grow">
         {/* Contact Info Section */}
         <section className="py-12 md:py-20 bg-gradient-to-b from-blue-50 to-white">
           <div className="container mx-auto px-4">
