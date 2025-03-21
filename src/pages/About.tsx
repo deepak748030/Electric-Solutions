@@ -25,8 +25,8 @@ const About = () => {
           <Breadcrumb className="justify-center">
             <BreadcrumbList className="justify-center text-gray-300">
               <BreadcrumbItem>
-                <BreadcrumbLink as={Link} to="/" className="text-white hover:text-brand-blue">
-                  Home
+                <BreadcrumbLink asChild>
+                  <Link to="/" className="text-white hover:text-brand-blue">Home</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
