@@ -1,19 +1,14 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Search, User, Menu, X } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const searchRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,27 +22,6 @@ const Navbar = () => {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
-
-  useEffect(() => {
-    // Close search when clicking outside
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setSearchOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/services?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchOpen(false);
-      setSearchQuery('');
-    }
-  };
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -91,41 +65,12 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <div 
-              ref={searchRef}
-              className="relative"
-              onMouseEnter={() => setSearchOpen(true)}
+            <button 
+              className="p-2 rounded-full bg-brand-blue text-white hover:bg-brand-darkBlue transition-all"
+              aria-label="Search"
             >
-              {searchOpen ? (
-                <form 
-                  onSubmit={handleSearchSubmit}
-                  className="absolute right-0 flex items-center transition-all duration-300 animate-slide-left bg-white rounded-md shadow-md overflow-hidden"
-                  style={{ width: '280px' }}
-                >
-                  <Input
-                    type="text"
-                    placeholder="Search services..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="border-none focus-visible:ring-0 flex-grow"
-                    autoFocus
-                  />
-                  <button 
-                    type="submit"
-                    className="p-2 bg-brand-blue text-white hover:bg-brand-darkBlue transition-all h-full"
-                  >
-                    <Search className="w-5 h-5" />
-                  </button>
-                </form>
-              ) : (
-                <button 
-                  className="p-2 rounded-full bg-brand-blue text-white hover:bg-brand-darkBlue transition-all"
-                  aria-label="Search"
-                >
-                  <Search className="w-5 h-5" />
-                </button>
-              )}
-            </div>
+              <Search className="w-5 h-5" />
+            </button>
             <Button variant="primary">Hire Now &rarr;</Button>
             <button 
               className="p-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all"
@@ -154,25 +99,6 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg p-4 animate-slide-down">
           <nav className="flex flex-col space-y-4">
-            {/* Mobile Search */}
-            <form onSubmit={handleSearchSubmit} className="mb-2">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search services..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pr-10 w-full"
-                />
-                <button 
-                  type="submit"
-                  className="absolute right-0 top-0 h-full flex items-center justify-center px-3 text-gray-500"
-                >
-                  <Search className="w-5 h-5" />
-                </button>
-              </div>
-            </form>
-            
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -190,6 +116,10 @@ const Navbar = () => {
             <div className="flex flex-col space-y-2 pt-2 border-t">
               <Button variant="primary" fullWidth>Hire Now</Button>
               <div className="grid grid-cols-2 gap-2">
+                <button className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700">
+                  <Search className="w-5 h-5 mr-2" />
+                  <span>Search</span>
+                </button>
                 <button className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700">
                   <User className="w-5 h-5 mr-2" />
                   <span>Profile</span>
