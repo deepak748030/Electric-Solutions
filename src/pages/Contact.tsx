@@ -35,7 +35,7 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       toast({
@@ -56,7 +56,7 @@ const Contact = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       {/* Breadcrumb Banner */}
       <div className="bg-gray-800 py-12 mb-8 mt-16">
         <div className="container mx-auto px-4">
@@ -76,7 +76,7 @@ const Contact = () => {
           </Breadcrumb>
         </div>
       </div>
-      
+
       <main className="flex-grow">
         {/* Contact Info Section */}
         <section className="py-12 md:py-20 bg-gradient-to-b from-blue-50 to-white">
@@ -87,7 +87,7 @@ const Contact = () => {
                 We're here to help with all your appliance repair needs. Reach out to us through any of the methods below.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {/* Phone */}
               <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
@@ -100,7 +100,7 @@ const Contact = () => {
                   Call us now
                 </a>
               </div>
-              
+
               {/* Email */}
               <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div className="bg-brand-blue rounded-full p-4 mb-4 text-white">
@@ -112,7 +112,7 @@ const Contact = () => {
                   Send an email
                 </a>
               </div>
-              
+
               {/* Address */}
               <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div className="bg-brand-blue rounded-full p-4 mb-4 text-white">
@@ -127,7 +127,7 @@ const Contact = () => {
             </div>
           </div>
         </section>
-        
+
         {/* Contact Form & Map Section */}
         <section className="py-12 md:py-20">
           <div className="container mx-auto px-4">
@@ -135,7 +135,7 @@ const Contact = () => {
               {/* Contact Form */}
               <div className="lg:col-span-3 bg-white rounded-lg shadow-lg p-8">
                 <h2 className="text-2xl font-bold mb-6">Feel Free to Get in Touch</h2>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -150,7 +150,7 @@ const Contact = () => {
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-blue focus:border-transparent"
                       />
                     </div>
-                    
+
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                       <input
@@ -163,7 +163,7 @@ const Contact = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email*</label>
@@ -177,7 +177,7 @@ const Contact = () => {
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-blue focus:border-transparent"
                       />
                     </div>
-                    
+
                     <div>
                       <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">Subject*</label>
                       <input
@@ -191,7 +191,7 @@ const Contact = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message*</label>
                     <Textarea
@@ -204,10 +204,10 @@ const Contact = () => {
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-blue focus:border-transparent"
                     />
                   </div>
-                  
+
                   <div>
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={isSubmitting}
                       className="flex items-center"
                     >
@@ -217,7 +217,7 @@ const Contact = () => {
                   </div>
                 </form>
               </div>
-              
+
               {/* Support Hours & Map */}
               <div className="lg:col-span-2 flex flex-col gap-6">
                 {/* Support Hours */}
@@ -228,28 +228,37 @@ const Contact = () => {
                     </div>
                     <h3 className="text-xl font-semibold text-center mb-4">Support Time</h3>
                     <p className="text-center text-xl font-bold mb-6">10.00AM to 05.00PM</p>
-                    <img 
-                      src="/public/lovable-uploads/f92c461d-115f-4313-8200-0c2d00db559b.png" 
-                      alt="Customer Support" 
+                    <img
+                      src="/public/lovable-uploads/f92c461d-115f-4313-8200-0c2d00db559b.png"
+                      alt="Customer Support"
                       className="mx-auto rounded-lg"
                     />
                   </div>
                 </div>
-                
-                {/* Map */}
-                <div className="flex-grow relative rounded-lg shadow-lg overflow-hidden min-h-[300px]">
-                  <img 
-                    src="/public/lovable-uploads/c9d45a97-0cba-407c-b4d6-3a021e5ef36a.png" 
-                    alt="Location Map" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+
+
               </div>
+
+
             </div>
           </div>
+          {/* Map */}
+          <div className="w-full h-[40vh] relative rounded-lg shadow-lg overflow-hidden mt-8">
+            <iframe
+              title="Location Map"
+              src="https://www.google.com/maps?q=New+Delhi,India&output=embed"
+              className="w-full h-full"
+              allowFullScreen
+              loading="lazy"
+            ></iframe>
+          </div>
+
+
+
+
         </section>
       </main>
-      
+
       <Footer />
     </div>
   );

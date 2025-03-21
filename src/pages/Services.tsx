@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { 
+import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
@@ -112,7 +112,7 @@ const Services = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       {/* Breadcrumb Banner */}
       <div className="bg-gray-800 py-12 mb-8 mt-16">
         <div className="container mx-auto px-4">
@@ -132,7 +132,7 @@ const Services = () => {
           </Breadcrumb>
         </div>
       </div>
-      
+
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
           {/* Filter Section */}
@@ -143,7 +143,7 @@ const Services = () => {
                 Location
               </div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
-                <select 
+                <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
@@ -156,14 +156,14 @@ const Services = () => {
                 </select>
               </div>
             </div>
-            
+
             {/* Category Filter */}
             <div>
               <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">
                 Category
               </div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
-                <select 
+                <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
@@ -175,14 +175,14 @@ const Services = () => {
                 </select>
               </div>
             </div>
-            
+
             {/* Price Range Filter */}
             <div>
               <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">
                 Price Range
               </div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
-                <select 
+                <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
                   value={selectedPriceRange}
                   onChange={(e) => setSelectedPriceRange(e.target.value)}
@@ -195,14 +195,14 @@ const Services = () => {
                 </select>
               </div>
             </div>
-            
+
             {/* Others Filter */}
             <div>
               <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">
                 Others
               </div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
-                <select 
+                <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
                   value={selectedOthers}
                   onChange={(e) => setSelectedOthers(e.target.value)}
@@ -215,14 +215,14 @@ const Services = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Services Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {services.map((service) => (
               <div key={service.id} className="border border-gray-200 rounded-lg overflow-hidden">
                 <div className="relative">
-                  <img 
-                    src={service.image} 
+                  <img
+                    src={service.image}
                     alt={service.title}
                     className="w-full h-52 object-cover"
                   />
@@ -233,31 +233,31 @@ const Services = () => {
                     {service.price}
                   </div>
                 </div>
-                
+
                 <div className="p-4">
                   <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                  
+
                   <div className="flex items-center mb-4">
-                    <img 
-                      src={service.providerImage} 
+                    <img
+                      src={service.providerImage}
                       alt={service.providerName}
                       className="w-6 h-6 rounded-full mr-2"
                     />
                     <span className="text-sm text-gray-600">{service.providerName}</span>
-                    
+
                     <div className="ml-auto flex">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <svg 
-                          key={star} 
-                          className="w-4 h-4 text-yellow-400" 
-                          fill="none" 
-                          stroke="currentColor" 
+                        <svg
+                          key={star}
+                          className="w-4 h-4 text-yellow-400"
+                          fill="none"
+                          stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth="2" 
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
                           />
                         </svg>
@@ -265,7 +265,7 @@ const Services = () => {
                       <span className="ml-1 text-xs text-gray-500">({service.reviews})</span>
                     </div>
                   </div>
-                  
+
                   <Button fullWidth variant="primary" className="bg-brand-blue text-white">
                     Book Now
                   </Button>
@@ -273,9 +273,9 @@ const Services = () => {
               </div>
             ))}
           </div>
-          
+
           {/* Pagination */}
-          <div className="flex justify-center mt-8">
+          <div className="flex flex-start my-8 justify-start  ">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
@@ -292,7 +292,7 @@ const Services = () => {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
