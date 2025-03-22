@@ -7,7 +7,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { Google } from 'lucide-react';
+import { LucideProps } from 'lucide-react';
+
+// Custom Google icon since it's not available in lucide-react
+const GoogleIcon = (props: LucideProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={props.size || 24}
+    height={props.size || 24}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={props.color || 'currentColor'}
+    strokeWidth={props.strokeWidth || 2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M17.13 17.21c-1.4 1.3-3.16 2.04-5.03 2.04a8.27 8.27 0 1 1 0-16.54c2.2 0 4.13.86 5.61 2.25l-2.3 2.37a4.67 4.67 0 0 0-3.33-1.29 5.12 5.12 0 0 0-4.53 2.8 5.3 5.3 0 0 0 0 5.34 5.12 5.12 0 0 0 4.53 2.8c2.21 0 3.82-1.16 4.45-2.73h-4.44v-3.18h7.55c.12.69.2 1.31.2 2.1 0 2.6-.71 4.75-2.7 6.04z" />
+  </svg>
+);
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -100,7 +119,7 @@ const Login = () => {
             </div>
             
             <Button variant="outline" className="w-full" type="button">
-              <Google className="mr-2 h-4 w-4" />
+              <GoogleIcon className="mr-2 h-4 w-4" />
               Sign In With Google
             </Button>
           </CardContent>
