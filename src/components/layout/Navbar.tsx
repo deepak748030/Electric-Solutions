@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, Menu, X, LogIn, UserPlus } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { cn } from '@/lib/utils';
@@ -8,20 +8,41 @@ import { cn } from '@/lib/utils';
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
+    // Check if user is logged in (this is a simple example, replace with your auth logic)
+    const checkLoginStatus = () => {
+      // For demonstration, we'll use localStorage, but you should use your auth system
+      const userToken = localStorage.getItem('userToken');
+      setIsLoggedIn(!!userToken);
+    };
+
     window.addEventListener('scroll', handleScroll);
+    checkLoginStatus();
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
+
+  const handleProfileClick = () => {
+    if (isLoggedIn) {
+      // Navigate to profile page (would need to create this page)
+      navigate('/profile');
+    } else {
+      // Navigate to login page
+      navigate('/auth/login');
+    }
+  };
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -74,15 +95,27 @@ const Navbar = () => {
             </button>
             <Button variant="primary">Hire Now &rarr;</Button>
             
-            <Link to="/auth/login" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
-              <LogIn className="w-5 h-5" />
-              <span className="font-medium">Login</span>
-            </Link>
-            
-            <Link to="/auth/register" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
-              <UserPlus className="w-5 h-5" />
-              <span className="font-medium">Register</span>
-            </Link>
+            {isLoggedIn ? (
+              <button 
+                onClick={handleProfileClick}
+                className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors"
+              >
+                <User className="w-5 h-5" />
+                <span className="font-medium">Profile</span>
+              </button>
+            ) : (
+              <>
+                <Link to="/auth/login" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
+                  <LogIn className="w-5 h-5" />
+                  <span className="font-medium">Login</span>
+                </Link>
+                
+                <Link to="/auth/register" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
+                  <UserPlus className="w-5 h-5" />
+                  <span className="font-medium">Register</span>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -121,20 +154,32 @@ const Navbar = () => {
             <div className="flex flex-col space-y-2 pt-2 border-t">
               <Button variant="primary" fullWidth>Hire Now</Button>
               <div className="grid grid-cols-2 gap-2">
-                <Link 
-                  to="/auth/login" 
-                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                >
-                  <LogIn className="w-5 h-5 mr-2" />
-                  <span>Login</span>
-                </Link>
-                <Link 
-                  to="/auth/register" 
-                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                >
-                  <UserPlus className="w-5 h-5 mr-2" />
-                  <span>Register</span>
-                </Link>
+                {isLoggedIn ? (
+                  <button 
+                    onClick={handleProfileClick}
+                    className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200 col-span-2"
+                  >
+                    <User className="w-5 h-5 mr-2" />
+                    <span>Profile</span>
+                  </button>
+                ) : (
+                  <>
+                    <Link 
+                      to="/auth/login" 
+                      className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                    >
+                      <LogIn className="w-5 h-5 mr-2" />
+                      <span>Login</span>
+                    </Link>
+                    <Link 
+                      to="/auth/register" 
+                      className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                    >
+                      <UserPlus className="w-5 h-5 mr-2" />
+                      <span>Register</span>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </nav>
