@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash, Upload, DollarSign } from 'lucide-react';
+import { Plus, Pencil, Trash, Upload, IndianRupee, MapPin } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { 
   Table, 
@@ -57,6 +57,7 @@ const Services = () => {
       price: 120, 
       duration: '2 hours', 
       categoryId: 1,
+      location: 'Mumbai, Delhi, Bangalore',
       image: '/lovable-uploads/d2bdb4e4-28b6-4d6d-97ae-1f356bc7cd37.png' 
     },
     { 
@@ -66,6 +67,7 @@ const Services = () => {
       price: 85, 
       duration: '1 hour', 
       categoryId: 2,
+      location: 'Delhi, Pune, Chennai',
       image: '/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png' 
     },
     { 
@@ -75,6 +77,7 @@ const Services = () => {
       price: 200, 
       duration: '4 hours', 
       categoryId: 3,
+      location: 'Hyderabad, Kolkata, Chennai',
       image: '/lovable-uploads/f4ff55b6-3170-4526-9347-e8eb769d7e87.png' 
     },
   ]);
@@ -85,6 +88,7 @@ const Services = () => {
     price: '',
     duration: '',
     categoryId: '',
+    location: '',
     image: ''
   });
   
@@ -112,6 +116,7 @@ const Services = () => {
       price: parseFloat(newService.price),
       duration: newService.duration,
       categoryId: parseInt(newService.categoryId),
+      location: newService.location,
       image: previewURL || '/placeholder.svg' 
     }]);
     
@@ -122,6 +127,7 @@ const Services = () => {
       price: '',
       duration: '',
       categoryId: '',
+      location: '',
       image: ''
     });
     setSelectedImage(null);
@@ -220,7 +226,7 @@ const Services = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <label htmlFor="price" className="text-sm font-medium">Price ($)</label>
+                  <label htmlFor="price" className="text-sm font-medium">Price (₹)</label>
                   <Input
                     id="price"
                     type="number"
@@ -239,6 +245,16 @@ const Services = () => {
                     placeholder="e.g. 2 hours"
                   />
                 </div>
+              </div>
+              
+              <div className="grid gap-2">
+                <label htmlFor="location" className="text-sm font-medium">Service Locations</label>
+                <Input
+                  id="location"
+                  value={newService.location}
+                  onChange={(e) => setNewService({...newService, location: e.target.value})}
+                  placeholder="e.g. Mumbai, Delhi, Bangalore"
+                />
               </div>
               
               <div className="grid gap-2">
@@ -341,6 +357,7 @@ const Services = () => {
                   <TableHead>Category</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Duration</TableHead>
+                  <TableHead>Locations</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -365,8 +382,17 @@ const Services = () => {
                     <TableCell>
                       {categories.find(c => c.id === service.categoryId)?.name}
                     </TableCell>
-                    <TableCell>${service.price.toFixed(2)}</TableCell>
+                    <TableCell className="flex items-center">
+                      <IndianRupee className="h-4 w-4 mr-1" />
+                      {service.price.toFixed(2)}
+                    </TableCell>
                     <TableCell>{service.duration}</TableCell>
+                    <TableCell>
+                      <div className="flex items-start gap-1">
+                        <MapPin className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
+                        <span className="text-sm">{service.location}</span>
+                      </div>
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Dialog>
@@ -416,7 +442,7 @@ const Services = () => {
                                 
                                 <div className="grid grid-cols-2 gap-4">
                                   <div className="grid gap-2">
-                                    <label htmlFor="edit-price" className="text-sm font-medium">Price ($)</label>
+                                    <label htmlFor="edit-price" className="text-sm font-medium">Price (₹)</label>
                                     <Input
                                       id="edit-price"
                                       type="number"
@@ -433,6 +459,16 @@ const Services = () => {
                                       onChange={(e) => setEditingService({...editingService, duration: e.target.value})}
                                     />
                                   </div>
+                                </div>
+                                
+                                <div className="grid gap-2">
+                                  <label htmlFor="edit-location" className="text-sm font-medium">Service Locations</label>
+                                  <Input
+                                    id="edit-location"
+                                    value={editingService.location}
+                                    onChange={(e) => setEditingService({...editingService, location: e.target.value})}
+                                    placeholder="e.g. Mumbai, Delhi, Bangalore"
+                                  />
                                 </div>
                                 
                                 <div className="grid gap-2">
