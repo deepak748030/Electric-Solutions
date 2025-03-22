@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, User, Menu, X } from 'lucide-react';
+import { Search, User, Menu, X, LogIn, UserPlus } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { cn } from '@/lib/utils';
 
@@ -42,11 +42,6 @@ const Navbar = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
-            {/* <img
-              src="/public/lovable-uploads/f4ff55b6-3170-4526-9347-e8eb769d7e87.png"
-              alt="Repair Guru Logo"
-              className="h-8 md:h-10"
-            /> */}
             <h1 className="text-2xl md:text-3xl font-bold text-brand-blue">Repair Guru</h1>
           </Link>
 
@@ -70,7 +65,7 @@ const Navbar = () => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             <button
               className="p-2 rounded-full bg-brand-blue text-white hover:bg-brand-darkBlue transition-all"
               aria-label="Search"
@@ -78,12 +73,16 @@ const Navbar = () => {
               <Search className="w-5 h-5" />
             </button>
             <Button variant="primary">Hire Now &rarr;</Button>
-            <button
-              className="p-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all"
-              aria-label="User profile"
-            >
-              <User className="w-5 h-5" />
-            </button>
+            
+            <Link to="/auth/login" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
+              <LogIn className="w-5 h-5" />
+              <span className="font-medium">Login</span>
+            </Link>
+            
+            <Link to="/auth/register" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
+              <UserPlus className="w-5 h-5" />
+              <span className="font-medium">Register</span>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -122,14 +121,20 @@ const Navbar = () => {
             <div className="flex flex-col space-y-2 pt-2 border-t">
               <Button variant="primary" fullWidth>Hire Now</Button>
               <div className="grid grid-cols-2 gap-2">
-                <button className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700">
-                  <Search className="w-5 h-5 mr-2" />
-                  <span>Search</span>
-                </button>
-                <button className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700">
-                  <User className="w-5 h-5 mr-2" />
-                  <span>Profile</span>
-                </button>
+                <Link 
+                  to="/auth/login" 
+                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                >
+                  <LogIn className="w-5 h-5 mr-2" />
+                  <span>Login</span>
+                </Link>
+                <Link 
+                  to="/auth/register" 
+                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                >
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  <span>Register</span>
+                </Link>
               </div>
             </div>
           </nav>
