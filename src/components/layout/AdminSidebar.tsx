@@ -9,7 +9,7 @@ import {
   ShoppingCart, 
   Tag, 
   X, 
-  LogOut
+  User
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -21,12 +21,6 @@ const AdminSidebar = () => {
   
   const toggleSidebar = () => {
     setExpanded(!expanded);
-  };
-  
-  const handleLogout = () => {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('isAdmin');
-    window.location.href = '/';
   };
   
   const menuItems = [
@@ -54,6 +48,11 @@ const AdminSidebar = () => {
       name: 'Settings', 
       path: '/admin/settings', 
       icon: <Settings className="h-5 w-5" /> 
+    },
+    { 
+      name: 'Profile', 
+      path: '/admin/profile', 
+      icon: <User className="h-5 w-5" /> 
     }
   ];
 
@@ -108,17 +107,12 @@ const AdminSidebar = () => {
       
       <div className="p-4 border-t">
         <Separator className="my-2" />
-        <Button
-          variant="ghost"
-          className={cn(
-            "w-full flex items-center text-gray-700 hover:bg-gray-100 py-2",
-            !expanded && "justify-center"
-          )}
-          onClick={handleLogout}
-        >
-          <LogOut className="h-5 w-5" />
-          {expanded && <span className="ml-3">Logout</span>}
-        </Button>
+        <Link to="/" className={cn(
+          "flex items-center text-gray-700 hover:bg-gray-100 py-2 px-3 rounded-lg",
+          !expanded && "justify-center"
+        )}>
+          {expanded ? "Back to Website" : <X className="h-5 w-5" />}
+        </Link>
       </div>
     </aside>
   );
