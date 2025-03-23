@@ -1,54 +1,27 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, LogIn, UserPlus, LayoutDashboard } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Search, User, Menu, X, LogIn, UserPlus } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
-  const [isAdmin, setIsAdmin] = useState(false); // Track admin status
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
-    // Check if user is logged in and if they're an admin
-    const checkLoginStatus = () => {
-      const userToken = localStorage.getItem('userToken');
-      const adminStatus = localStorage.getItem('isAdmin');
-      setIsLoggedIn(!!userToken);
-      setIsAdmin(adminStatus === 'true');
-    };
-
     window.addEventListener('scroll', handleScroll);
-    checkLoginStatus();
-    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
-
-  const handleProfileClick = () => {
-    if (isLoggedIn) {
-      // Navigate to profile page
-      if (isAdmin) {
-        navigate('/admin/profile');
-      } else {
-        navigate('/profile');
-      }
-    } else {
-      // Navigate to login page
-      navigate('/auth/login');
-    }
-  };
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -100,40 +73,13 @@ const Navbar = () => {
               <Search className="w-5 h-5" />
             </button>
             <Button variant="primary">Hire Now &rarr;</Button>
-            
-            {isLoggedIn ? (
-              <div className="flex items-center space-x-3">
-                {isAdmin && (
-                  <Link 
-                    to="/admin" 
-                    className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors"
-                  >
-                    <LayoutDashboard className="w-5 h-5" />
-                    <span className="font-medium">Admin</span>
-                  </Link>
-                )}
-                
-                <button 
-                  onClick={handleProfileClick}
-                  className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors"
-                >
-                  <User className="w-5 h-5" />
-                  <span className="font-medium">Profile</span>
-                </button>
-              </div>
-            ) : (
-              <>
-                <Link to="/auth/login" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
-                  <LogIn className="w-5 h-5" />
-                  <span className="font-medium">Login</span>
-                </Link>
-                
-                <Link to="/auth/register" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
-                  <UserPlus className="w-5 h-5" />
-                  <span className="font-medium">Register</span>
-                </Link>
-              </>
-            )}
+
+
+
+            <Link to="/auth/login" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
+              <UserPlus className="w-5 h-5" />
+              {/* <span className="font-medium">Register</span> */}
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -172,43 +118,20 @@ const Navbar = () => {
             <div className="flex flex-col space-y-2 pt-2 border-t">
               <Button variant="primary" fullWidth>Hire Now</Button>
               <div className="grid grid-cols-2 gap-2">
-                {isLoggedIn ? (
-                  <>
-                    {isAdmin && (
-                      <Link 
-                        to="/admin" 
-                        className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                      >
-                        <LayoutDashboard className="w-5 h-5 mr-2" />
-                        <span>Admin</span>
-                      </Link>
-                    )}
-                    <button 
-                      onClick={handleProfileClick}
-                      className={`p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200 ${isAdmin ? '' : 'col-span-2'}`}
-                    >
-                      <User className="w-5 h-5 mr-2" />
-                      <span>Profile</span>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link 
-                      to="/auth/login" 
-                      className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                    >
-                      <LogIn className="w-5 h-5 mr-2" />
-                      <span>Login</span>
-                    </Link>
-                    <Link 
-                      to="/auth/register" 
-                      className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                    >
-                      <UserPlus className="w-5 h-5 mr-2" />
-                      <span>Register</span>
-                    </Link>
-                  </>
-                )}
+                <Link
+                  to="/auth/login"
+                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                >
+                  <LogIn className="w-5 h-5 mr-2" />
+                  {/* <span>Login</span> */}
+                </Link>
+                <Link
+                  to="/auth/register"
+                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                >
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  {/* <span>Register</span> */}
+                </Link>
               </div>
             </div>
           </nav>

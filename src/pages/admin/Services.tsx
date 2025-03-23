@@ -1,316 +1,458 @@
+"use client"
 
-import React, { useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger, 
-  DialogClose 
-} from '@/components/ui/dialog';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Plus, Pencil, Trash, Upload, IndianRupee, MapPin } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Plus, Pencil, Trash, Upload } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 const Services = () => {
-  // Mock categories
-  const categories = [
-    { id: 1, name: 'Electrical Services' },
-    { id: 2, name: 'Plumbing' },
-    { id: 3, name: 'Cleaning Services' },
-    { id: 4, name: 'Painting' },
-  ];
+  const [services, setServices] = useState([])
 
-  // Mock services data
-  const [services, setServices] = useState([
-    { 
-      id: 1, 
-      name: 'AC Repair', 
-      description: 'Professional AC repair service', 
-      price: 120, 
-      duration: '2 hours', 
-      categoryId: 1,
-      location: 'Mumbai, Delhi, Bangalore',
-      image: '/lovable-uploads/d2bdb4e4-28b6-4d6d-97ae-1f356bc7cd37.png' 
-    },
-    { 
-      id: 2, 
-      name: 'Pipe Fixing', 
-      description: 'Fix leaky pipes', 
-      price: 85, 
-      duration: '1 hour', 
-      categoryId: 2,
-      location: 'Delhi, Pune, Chennai',
-      image: '/lovable-uploads/37548b2d-dde2-438f-91fd-70758060f852.png' 
-    },
-    { 
-      id: 3, 
-      name: 'Deep Cleaning', 
-      description: 'Complete house deep cleaning', 
-      price: 200, 
-      duration: '4 hours', 
-      categoryId: 3,
-      location: 'Hyderabad, Kolkata, Chennai',
-      image: '/lovable-uploads/f4ff55b6-3170-4526-9347-e8eb769d7e87.png' 
-    },
-  ]);
+  const getServices = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/services`)
+      if (res.data.success) {
+        setServices(res.data.services)
+        console.log(res.data.services)
+      }
+    } catch (error) {
+      console.error("Error fetching services:", error)
+    }
+  }
+
+  useEffect(() => {
+    getServices()
+  }, [])
 
   const [newService, setNewService] = useState({
-    name: '',
-    description: '',
-    price: '',
-    duration: '',
-    categoryId: '',
-    location: '',
-    image: ''
-  });
-  
-  const [editingService, setEditingService] = useState(null);
-  const [previewURL, setPreviewURL] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [filterCategory, setFilterCategory] = useState('all');
+    title: "",
+    price: "",
+    category: "",
+    providerName: "",
+    type: "popular",
+    locations: [],
+    rating: "0",
+  })
+
+  const [editingService, setEditingService] = useState(null)
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [selectedProviderImage, setSelectedProviderImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState("")
+  const [providerImagePreview, setProviderImagePreview] = useState("")
+  const [filterCategory, setFilterCategory] = useState("all")
+  const [locationInput, setLocationInput] = useState("")
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedImage(file);
-      setPreviewURL(URL.createObjectURL(file));
+      const file = e.target.files[0]
+      setSelectedImage(file)
+      setImagePreview(URL.createObjectURL(file))
     }
-  };
+  }
 
-  const handleAddService = () => {
-    if (newService.name.trim() === '' || !newService.categoryId || !newService.price) return;
-    
-    const newId = services.length > 0 ? Math.max(...services.map(s => s.id)) + 1 : 1;
-    setServices([...services, { 
-      id: newId, 
-      name: newService.name, 
-      description: newService.description,
-      price: parseFloat(newService.price),
-      duration: newService.duration,
-      categoryId: parseInt(newService.categoryId),
-      location: newService.location,
-      image: previewURL || '/placeholder.svg' 
-    }]);
-    
-    // Reset form
-    setNewService({
-      name: '',
-      description: '',
-      price: '',
-      duration: '',
-      categoryId: '',
-      location: '',
-      image: ''
-    });
-    setSelectedImage(null);
-    setPreviewURL('');
-  };
+  const handleProviderImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      setSelectedProviderImage(file)
+      setProviderImagePreview(URL.createObjectURL(file))
+    }
+  }
+
+  const handleAddLocation = () => {
+    if (locationInput.trim() === "") return
+
+    if (editingService) {
+      setEditingService({
+        ...editingService,
+        locations: [...(editingService.locations || []), locationInput],
+      })
+    } else {
+      setNewService({
+        ...newService,
+        locations: [...newService.locations, locationInput],
+      })
+    }
+
+    setLocationInput("")
+  }
+
+  const handleRemoveLocation = (index, isEditing = false) => {
+    if (isEditing && editingService) {
+      const updatedLocations = [...editingService.locations]
+      updatedLocations.splice(index, 1)
+      setEditingService({
+        ...editingService,
+        locations: updatedLocations,
+      })
+    } else {
+      const updatedLocations = [...newService.locations]
+      updatedLocations.splice(index, 1)
+      setNewService({
+        ...newService,
+        locations: updatedLocations,
+      })
+    }
+  }
+
+  const handleAddService = async () => {
+    if (newService.title.trim() === "" || !newService.category || !newService.providerName.trim()) return
+
+    try {
+      const formData = new FormData()
+
+      formData.append("title", newService.title)
+      formData.append("price", newService.price)
+      formData.append("category", newService.category)
+      formData.append("providerName", newService.providerName)
+      formData.append("type", newService.type)
+      formData.append("rating", newService.rating || "0")
+      formData.append("reviews", "0")
+      formData.append("locations", JSON.stringify(newService.locations))
+
+      if (selectedImage) {
+        formData.append("image", selectedImage)
+      }
+
+      if (selectedProviderImage) {
+        formData.append("providerImage", selectedProviderImage)
+      }
+
+      const res = await axios.post("http://localhost:3000/api/services", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+
+      if (res.data.success) {
+        getServices()
+
+        setNewService({
+          title: "",
+          price: "₹249",
+          category: "",
+          providerName: "",
+          type: "popular",
+          locations: [],
+          rating: "0",
+        })
+        setSelectedImage(null)
+        setSelectedProviderImage(null)
+        setImagePreview("")
+        setProviderImagePreview("")
+      }
+    } catch (error) {
+      console.error("Error adding service:", error)
+    }
+  }
 
   const handleEditService = (service) => {
     setEditingService({
       ...service,
-      categoryId: service.categoryId.toString(),
-      price: service.price.toString()
-    });
-    setPreviewURL(service.image);
-  };
+    })
+    setImagePreview(service.image || "")
+    setProviderImagePreview(service.providerImage || "")
+    setLocationInput("")
+  }
 
-  const handleUpdateService = () => {
-    if (!editingService) return;
-    
-    setServices(services.map(svc => 
-      svc.id === editingService.id ? 
-      { 
-        ...editingService, 
-        categoryId: parseInt(editingService.categoryId),
-        price: parseFloat(editingService.price),
-        image: previewURL || editingService.image 
-      } : 
-      svc
-    ));
-    
-    setEditingService(null);
-    setSelectedImage(null);
-    setPreviewURL('');
-  };
+  const handleUpdateService = async () => {
+    if (!editingService || !editingService.providerName.trim()) return
 
-  const handleDeleteService = (id) => {
-    setServices(services.filter(service => service.id !== id));
-  };
+    try {
+      const formData = new FormData()
 
-  // Filter services by category
-  const filteredServices = filterCategory === 'all' 
-    ? services 
-    : services.filter(service => service.categoryId === parseInt(filterCategory));
+      formData.append("title", editingService.title)
+      formData.append("price", editingService.price)
+      formData.append("category", editingService.category)
+      formData.append("providerName", editingService.providerName)
+      formData.append("type", editingService.type)
+      formData.append("rating", editingService.rating || "0")
+      formData.append("locations", JSON.stringify(editingService.locations || []))
+
+      if (selectedImage) {
+        formData.append("image", selectedImage)
+      }
+
+      if (selectedProviderImage) {
+        formData.append("providerImage", selectedProviderImage)
+      }
+
+      const res = await axios.patch(`http://localhost:3000/api/services/${editingService._id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+
+      if (res.data.success) {
+        getServices()
+        setEditingService(null)
+        setSelectedImage(null)
+        setSelectedProviderImage(null)
+        setImagePreview("")
+        setProviderImagePreview("")
+      }
+    } catch (error) {
+      console.error("Error updating service:", error)
+    }
+  }
+
+  const handleDeleteService = async (id) => {
+    try {
+      const res = await axios.delete(`http://localhost:3000/api/services/${id}`)
+      if (res.data.success) {
+        getServices()
+      }
+    } catch (error) {
+      console.error("Error deleting service:", error)
+    }
+  }
+
+  const filteredServices =
+    filterCategory === "all" ? services : services.filter((service) => service.category === filterCategory)
+
+  const uniqueCategories = Array.from(new Set(services.map((service) => service.category))).filter(Boolean)
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 p-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Services</h1>
-          <p className="text-gray-500 mt-1">Manage repair and maintenance services</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Services</h1>
+          <p className="text-sm sm:text-base text-gray-500 mt-1">Manage repair and maintenance services</p>
         </div>
-        
+
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 w-full sm:w-auto">
               <Plus className="h-4 w-4" />
               Add Service
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-3xl">
             <DialogHeader>
               <DialogTitle>Add New Service</DialogTitle>
-              <DialogDescription>
-                Create a new service with details and pricing.
-              </DialogDescription>
+              <DialogDescription>Create a new service with details and pricing.</DialogDescription>
             </DialogHeader>
-            
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <label htmlFor="name" className="text-sm font-medium">Service Name</label>
-                <Input
-                  id="name"
-                  value={newService.name}
-                  onChange={(e) => setNewService({...newService, name: e.target.value})}
-                  placeholder="Service name"
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <label htmlFor="category" className="text-sm font-medium">Category</label>
-                <Select
-                  value={newService.categoryId}
-                  onValueChange={(value) => setNewService({...newService, categoryId: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map(category => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <label htmlFor="price" className="text-sm font-medium">Price (₹)</label>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={newService.price}
-                    onChange={(e) => setNewService({...newService, price: e.target.value})}
-                    placeholder="0.00"
-                  />
-                </div>
-                
-                <div className="grid gap-2">
-                  <label htmlFor="duration" className="text-sm font-medium">Duration</label>
-                  <Input
-                    id="duration"
-                    value={newService.duration}
-                    onChange={(e) => setNewService({...newService, duration: e.target.value})}
-                    placeholder="e.g. 2 hours"
-                  />
-                </div>
-              </div>
-              
-              <div className="grid gap-2">
-                <label htmlFor="location" className="text-sm font-medium">Service Locations</label>
-                <Input
-                  id="location"
-                  value={newService.location}
-                  onChange={(e) => setNewService({...newService, location: e.target.value})}
-                  placeholder="e.g. Mumbai, Delhi, Bangalore"
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <label htmlFor="description" className="text-sm font-medium">Description</label>
-                <Textarea
-                  id="description"
-                  value={newService.description}
-                  onChange={(e) => setNewService({...newService, description: e.target.value})}
-                  placeholder="Service description"
-                  rows={3}
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <label htmlFor="image" className="text-sm font-medium">Image</label>
-                <div className="grid gap-2">
-                  <div className="flex items-center gap-4">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => document.getElementById('add-service-image').click()}
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Image
-                    </Button>
-                    <input
-                      type="file"
-                      id="add-service-image"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleImageChange}
+
+            <div className="max-h-[60vh] overflow-hidden">
+              <ScrollArea className="h-full pr-4">
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <label htmlFor="title" className="text-sm font-medium">
+                      Service Title
+                    </label>
+                    <Input
+                      id="title"
+                      value={newService.title}
+                      onChange={(e) => setNewService({ ...newService, title: e.target.value })}
+                      placeholder="Service title"
                     />
                   </div>
-                  
-                  {previewURL && (
-                    <div className="mt-2 relative">
-                      <img 
-                        src={previewURL} 
-                        alt="Preview" 
-                        className="w-full h-48 object-cover rounded-md" 
-                      />
+
+                  <div className="grid gap-2">
+                    <label htmlFor="category" className="text-sm font-medium">
+                      Category
+                    </label>
+                    <Input
+                      id="category"
+                      value={newService.category}
+                      onChange={(e) => setNewService({ ...newService, category: e.target.value })}
+                      placeholder="Category name"
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <label htmlFor="providerName" className="text-sm font-medium">
+                      Provider Name
+                    </label>
+                    <Input
+                      id="providerName"
+                      value={newService.providerName}
+                      onChange={(e) => setNewService({ ...newService, providerName: e.target.value })}
+                      placeholder="Provider name"
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <label htmlFor="price" className="text-sm font-medium">
+                      Price
+                    </label>
+                    <Input
+                      id="price"
+                      value={newService.price}
+                      onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+                      placeholder="₹249"
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <label htmlFor="type" className="text-sm font-medium">
+                      Type
+                    </label>
+                    <Select
+                      value={newService.type}
+                      onValueChange={(value) => setNewService({ ...newService, type: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="popular">Popular</SelectItem>
+                        <SelectItem value="featured">Featured</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <label htmlFor="rating" className="text-sm font-medium">
+                      Rating
+                    </label>
+                    <Input
+                      id="rating"
+                      type="number"
+                      min="0"
+                      max="5"
+                      step="0.1"
+                      value={newService.rating || 0}
+                      onChange={(e) => setNewService({ ...newService, rating: e.target.value })}
+                      placeholder="0.0"
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <label htmlFor="locations" className="text-sm font-medium">
+                      Locations
+                    </label>
+                    <div className="grid gap-2">
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="locations"
+                          value={locationInput}
+                          onChange={(e) => setLocationInput(e.target.value)}
+                          placeholder="Add a location"
+                        />
+                        <Button type="button" variant="outline" onClick={handleAddLocation}>
+                          Add
+                        </Button>
+                      </div>
+                      {newService.locations.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {newService.locations.map((location, index) => (
+                            <div key={index} className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md">
+                              <span className="text-sm">{location}</span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-5 w-5 p-0"
+                                onClick={() => handleRemoveLocation(index)}
+                              >
+                                <Trash className="h-3 w-3" />
+                                <span className="sr-only">Remove</span>
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
+
+                  <div className="grid gap-2">
+                    <label htmlFor="image" className="text-sm font-medium">
+                      Service Image
+                    </label>
+                    <div className="grid gap-2">
+                      <div className="flex items-center gap-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => document.getElementById("add-service-image").click()}
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Image
+                        </Button>
+                        <input
+                          type="file"
+                          id="add-service-image"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                        />
+                      </div>
+
+                      {imagePreview && (
+                        <div className="mt-2 relative">
+                          <img
+                            src={imagePreview || "/placeholder.svg"}
+                            alt="Preview"
+                            className="w-full h-48 object-cover rounded-md"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <label htmlFor="providerImage" className="text-sm font-medium">
+                      Provider Image
+                    </label>
+                    <div className="grid gap-2">
+                      <div className="flex items-center gap-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => document.getElementById("add-provider-image").click()}
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Provider Image
+                        </Button>
+                        <input
+                          type="file"
+                          id="add-provider-image"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleProviderImageChange}
+                        />
+                      </div>
+
+                      {providerImagePreview && (
+                        <div className="mt-2 relative">
+                          <img
+                            src={providerImagePreview || "/placeholder.svg"}
+                            alt="Provider Preview"
+                            className="w-full h-48 object-cover rounded-md"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </ScrollArea>
             </div>
-            
-            <DialogFooter>
+
+            <DialogFooter className="mt-6">
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <DialogClose asChild>
-                <Button 
-                  onClick={handleAddService} 
-                  disabled={!newService.name.trim() || !newService.categoryId || !newService.price}
+                <Button
+                  onClick={handleAddService}
+                  disabled={!newService.title.trim() || !newService.category || !newService.providerName.trim()}
                 >
                   Add Service
                 </Button>
@@ -319,34 +461,32 @@ const Services = () => {
           </DialogContent>
         </Dialog>
       </div>
-      
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Filter by category:</span>
-          <Select
-            value={filterCategory}
-            onValueChange={setFilterCategory}
-          >
+          <span className="text-sm text-gray-500">Filter:</span>
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map(category => (
-                <SelectItem key={category.id} value={category.id.toString()}>
-                  {category.name}
+              {uniqueCategories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        
+
         <div className="text-sm text-gray-500">
-          Showing {filteredServices.length} of {services.length} services
+          {filteredServices.length} of {services.length} services
         </div>
       </div>
-      
-      <div className="grid grid-cols-1 gap-6">
+
+      {/* Desktop view */}
+      <div className="hidden sm:block">
         <Card>
           <CardContent className="p-0">
             <Table>
@@ -356,43 +496,51 @@ const Services = () => {
                   <TableHead>Service</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Duration</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Rating</TableHead>
                   <TableHead>Locations</TableHead>
+                  <TableHead>Provider</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredServices.map(service => (
-                  <TableRow key={service.id}>
+                {filteredServices.map((service) => (
+                  <TableRow key={service._id}>
                     <TableCell>
-                      <img 
-                        src={service.image} 
-                        alt={service.name}
+                      <img
+                        src={service.image || "/placeholder.svg"}
+                        alt={service.title}
                         className="w-16 h-16 object-cover rounded"
                       />
                     </TableCell>
                     <TableCell>
-                      <div>
-                        <p className="font-medium">{service.name}</p>
-                        <p className="text-sm text-gray-500 truncate max-w-[250px]">
-                          {service.description}
-                        </p>
+                      <p className="font-medium">{service.title}</p>
+                    </TableCell>
+                    <TableCell>{service.category}</TableCell>
+                    <TableCell>{service.price}</TableCell>
+                    <TableCell>
+                      <span className="capitalize">{service.type}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="mr-2">{service.rating || 0}</span>
+                        <span className="text-yellow-500">★</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {categories.find(c => c.id === service.categoryId)?.name}
+                      {service.locations && service.locations.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {service.locations.map((location, index) => (
+                            <span key={index} className="inline-block bg-muted px-2 py-1 text-xs rounded-md">
+                              {location}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">No locations</span>
+                      )}
                     </TableCell>
-                    <TableCell className="flex items-center">
-                      <IndianRupee className="h-4 w-4 mr-1" />
-                      {service.price.toFixed(2)}
-                    </TableCell>
-                    <TableCell>{service.duration}</TableCell>
-                    <TableCell>
-                      <div className="flex items-start gap-1">
-                        <MapPin className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
-                        <span className="text-sm">{service.location}</span>
-                      </div>
-                    </TableCell>
+                    <TableCell>{service.providerName}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Dialog>
@@ -402,139 +550,245 @@ const Services = () => {
                               <span className="sr-only">Edit</span>
                             </Button>
                           </DialogTrigger>
-                          <DialogContent>
+                          <DialogContent className="max-w-3xl">
                             <DialogHeader>
                               <DialogTitle>Edit Service</DialogTitle>
-                              <DialogDescription>
-                                Update service details.
-                              </DialogDescription>
+                              <DialogDescription>Update service details.</DialogDescription>
                             </DialogHeader>
-                            
+
                             {editingService && (
-                              <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                  <label htmlFor="edit-name" className="text-sm font-medium">Service Name</label>
-                                  <Input
-                                    id="edit-name"
-                                    value={editingService.name}
-                                    onChange={(e) => setEditingService({...editingService, name: e.target.value})}
-                                  />
-                                </div>
-                                
-                                <div className="grid gap-2">
-                                  <label htmlFor="edit-category" className="text-sm font-medium">Category</label>
-                                  <Select
-                                    value={editingService.categoryId}
-                                    onValueChange={(value) => setEditingService({...editingService, categoryId: value})}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {categories.map(category => (
-                                        <SelectItem key={category.id} value={category.id.toString()}>
-                                          {category.name}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div className="grid gap-2">
-                                    <label htmlFor="edit-price" className="text-sm font-medium">Price (₹)</label>
-                                    <Input
-                                      id="edit-price"
-                                      type="number"
-                                      value={editingService.price}
-                                      onChange={(e) => setEditingService({...editingService, price: e.target.value})}
-                                    />
-                                  </div>
-                                  
-                                  <div className="grid gap-2">
-                                    <label htmlFor="edit-duration" className="text-sm font-medium">Duration</label>
-                                    <Input
-                                      id="edit-duration"
-                                      value={editingService.duration}
-                                      onChange={(e) => setEditingService({...editingService, duration: e.target.value})}
-                                    />
-                                  </div>
-                                </div>
-                                
-                                <div className="grid gap-2">
-                                  <label htmlFor="edit-location" className="text-sm font-medium">Service Locations</label>
-                                  <Input
-                                    id="edit-location"
-                                    value={editingService.location}
-                                    onChange={(e) => setEditingService({...editingService, location: e.target.value})}
-                                    placeholder="e.g. Mumbai, Delhi, Bangalore"
-                                  />
-                                </div>
-                                
-                                <div className="grid gap-2">
-                                  <label htmlFor="edit-description" className="text-sm font-medium">Description</label>
-                                  <Textarea
-                                    id="edit-description"
-                                    value={editingService.description}
-                                    onChange={(e) => setEditingService({...editingService, description: e.target.value})}
-                                    rows={3}
-                                  />
-                                </div>
-                                
-                                <div className="grid gap-2">
-                                  <label htmlFor="edit-service-image" className="text-sm font-medium">Image</label>
-                                  <div className="grid gap-2">
-                                    <div className="flex items-center gap-4">
-                                      <Button 
-                                        type="button" 
-                                        variant="outline" 
-                                        className="w-full"
-                                        onClick={() => document.getElementById('edit-service-image').click()}
-                                      >
-                                        <Upload className="h-4 w-4 mr-2" />
-                                        Change Image
-                                      </Button>
-                                      <input
-                                        type="file"
-                                        id="edit-service-image"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
+                              <div className="max-h-[60vh] overflow-hidden">
+                                <ScrollArea className="h-full pr-4">
+                                  <div className="grid gap-4 py-4">
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-title" className="text-sm font-medium">
+                                        Service Title
+                                      </label>
+                                      <Input
+                                        id="edit-title"
+                                        value={editingService.title}
+                                        onChange={(e) =>
+                                          setEditingService({ ...editingService, title: e.target.value })
+                                        }
                                       />
                                     </div>
-                                    
-                                    {previewURL && (
-                                      <div className="mt-2 relative">
-                                        <img 
-                                          src={previewURL} 
-                                          alt="Preview" 
-                                          className="w-full h-48 object-cover rounded-md" 
-                                        />
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-category" className="text-sm font-medium">
+                                        Category
+                                      </label>
+                                      <Input
+                                        id="edit-category"
+                                        value={editingService.category}
+                                        onChange={(e) =>
+                                          setEditingService({ ...editingService, category: e.target.value })
+                                        }
+                                      />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-provider-name" className="text-sm font-medium">
+                                        Provider Name
+                                      </label>
+                                      <Input
+                                        id="edit-provider-name"
+                                        value={editingService.providerName}
+                                        onChange={(e) =>
+                                          setEditingService({ ...editingService, providerName: e.target.value })
+                                        }
+                                      />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-price" className="text-sm font-medium">
+                                        Price
+                                      </label>
+                                      <Input
+                                        id="edit-price"
+                                        value={editingService.price}
+                                        onChange={(e) =>
+                                          setEditingService({ ...editingService, price: e.target.value })
+                                        }
+                                      />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-type" className="text-sm font-medium">
+                                        Type
+                                      </label>
+                                      <Select
+                                        value={editingService.type}
+                                        onValueChange={(value) => setEditingService({ ...editingService, type: value })}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="popular">Popular</SelectItem>
+                                          <SelectItem value="featured">Featured</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-rating" className="text-sm font-medium">
+                                        Rating
+                                      </label>
+                                      <Input
+                                        id="edit-rating"
+                                        type="number"
+                                        min="0"
+                                        max="5"
+                                        step="0.1"
+                                        value={editingService.rating || 0}
+                                        onChange={(e) =>
+                                          setEditingService({ ...editingService, rating: e.target.value })
+                                        }
+                                      />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-locations" className="text-sm font-medium">
+                                        Locations
+                                      </label>
+                                      <div className="grid gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <Input
+                                            id="edit-locations"
+                                            value={locationInput}
+                                            onChange={(e) => setLocationInput(e.target.value)}
+                                            placeholder="Add a location"
+                                          />
+                                          <Button type="button" variant="outline" onClick={handleAddLocation}>
+                                            Add
+                                          </Button>
+                                        </div>
+                                        {editingService.locations && editingService.locations.length > 0 && (
+                                          <div className="mt-2 flex flex-wrap gap-2">
+                                            {editingService.locations.map((location, index) => (
+                                              <div
+                                                key={index}
+                                                className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md"
+                                              >
+                                                <span className="text-sm">{location}</span>
+                                                <Button
+                                                  type="button"
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-5 w-5 p-0"
+                                                  onClick={() => handleRemoveLocation(index, true)}
+                                                >
+                                                  <Trash className="h-3 w-3" />
+                                                  <span className="sr-only">Remove</span>
+                                                </Button>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
                                       </div>
-                                    )}
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-service-image" className="text-sm font-medium">
+                                        Service Image
+                                      </label>
+                                      <div className="grid gap-2">
+                                        <div className="flex items-center gap-4">
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="w-full"
+                                            onClick={() => document.getElementById("edit-service-image").click()}
+                                          >
+                                            <Upload className="h-4 w-4 mr-2" />
+                                            Change Image
+                                          </Button>
+                                          <input
+                                            type="file"
+                                            id="edit-service-image"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                          />
+                                        </div>
+
+                                        {imagePreview && (
+                                          <div className="mt-2 relative">
+                                            <img
+                                              src={imagePreview || "/placeholder.svg"}
+                                              alt="Preview"
+                                              className="w-full h-48 object-cover rounded-md"
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                      <label htmlFor="edit-provider-image" className="text-sm font-medium">
+                                        Provider Image
+                                      </label>
+                                      <div className="grid gap-2">
+                                        <div className="flex items-center gap-4">
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="w-full"
+                                            onClick={() => document.getElementById("edit-provider-image").click()}
+                                          >
+                                            <Upload className="h-4 w-4 mr-2" />
+                                            Change Provider Image
+                                          </Button>
+                                          <input
+                                            type="file"
+                                            id="edit-provider-image"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleProviderImageChange}
+                                          />
+                                        </div>
+
+                                        {providerImagePreview && (
+                                          <div className="mt-2 relative">
+                                            <img
+                                              src={providerImagePreview || "/placeholder.svg"}
+                                              alt="Provider Preview"
+                                              className="w-full h-48 object-cover rounded-md"
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
+                                </ScrollArea>
                               </div>
                             )}
-                            
-                            <DialogFooter>
+
+                            <DialogFooter className="mt-6">
                               <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                               </DialogClose>
                               <DialogClose asChild>
-                                <Button onClick={handleUpdateService}>
+                                <Button
+                                  onClick={handleUpdateService}
+                                  disabled={
+                                    !editingService?.title.trim() ||
+                                    !editingService?.category ||
+                                    !editingService?.providerName.trim()
+                                  }
+                                >
                                   Update Service
                                 </Button>
                               </DialogClose>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
-                          onClick={() => handleDeleteService(service.id)}
+                          onClick={() => handleDeleteService(service._id)}
                         >
                           <Trash className="h-4 w-4" />
                           <span className="sr-only">Delete</span>
@@ -548,8 +802,304 @@ const Services = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-};
 
-export default Services;
+      {/* Mobile view */}
+      <div className="grid grid-cols-1 gap-4 sm:hidden">
+        {filteredServices.map((service) => (
+          <Card key={service._id} className="overflow-hidden">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-4">
+                <img
+                  src={service.image || "/placeholder.svg"}
+                  alt={service.title}
+                  className="w-20 h-20 object-cover rounded"
+                />
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-base truncate">{service.title}</h3>
+                  <div className="mt-1 space-y-1">
+                    <p className="text-sm text-gray-500">
+                      Category: <span className="font-medium">{service.category}</span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Price: <span className="font-medium">{service.price}</span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Type: <span className="font-medium capitalize">{service.type}</span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Rating:{" "}
+                      <span className="font-medium flex items-center">
+                        {service.rating || 0} <span className="text-yellow-500 ml-1">★</span>
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Locations:
+                      {service.locations && service.locations.length > 0 ? (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {service.locations.map((location, index) => (
+                            <span key={index} className="inline-block bg-muted px-2 py-1 text-xs rounded-md">
+                              {location}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="font-medium"> None</span>
+                      )}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Provider: <span className="font-medium">{service.providerName}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" onClick={() => handleEditService(service)}>
+                      <Pencil className="h-4 w-4" />
+                      <span className="sr-only">Edit</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                      <DialogTitle>Edit Service</DialogTitle>
+                      <DialogDescription>Update service details.</DialogDescription>
+                    </DialogHeader>
+                    {editingService && (
+                      <div className="max-h-[60vh] overflow-hidden">
+                        <ScrollArea className="h-full pr-4">
+                          <div className="grid gap-4 py-4">
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-title-mobile" className="text-sm font-medium">
+                                Service Title
+                              </label>
+                              <Input
+                                id="edit-title-mobile"
+                                value={editingService.title}
+                                onChange={(e) => setEditingService({ ...editingService, title: e.target.value })}
+                              />
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-category-mobile" className="text-sm font-medium">
+                                Category
+                              </label>
+                              <Input
+                                id="edit-category-mobile"
+                                value={editingService.category}
+                                onChange={(e) => setEditingService({ ...editingService, category: e.target.value })}
+                              />
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-provider-name-mobile" className="text-sm font-medium">
+                                Provider Name
+                              </label>
+                              <Input
+                                id="edit-provider-name-mobile"
+                                value={editingService.providerName}
+                                onChange={(e) => setEditingService({ ...editingService, providerName: e.target.value })}
+                              />
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-price-mobile" className="text-sm font-medium">
+                                Price
+                              </label>
+                              <Input
+                                id="edit-price-mobile"
+                                value={editingService.price}
+                                onChange={(e) => setEditingService({ ...editingService, price: e.target.value })}
+                              />
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-type-mobile" className="text-sm font-medium">
+                                Type
+                              </label>
+                              <Select
+                                value={editingService.type}
+                                onValueChange={(value) => setEditingService({ ...editingService, type: value })}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="popular">Popular</SelectItem>
+                                  <SelectItem value="featured">Featured</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-rating-mobile" className="text-sm font-medium">
+                                Rating
+                              </label>
+                              <Input
+                                id="edit-rating-mobile"
+                                type="number"
+                                min="0"
+                                max="5"
+                                step="0.1"
+                                value={editingService.rating || 0}
+                                onChange={(e) => setEditingService({ ...editingService, rating: e.target.value })}
+                              />
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-locations-mobile" className="text-sm font-medium">
+                                Locations
+                              </label>
+                              <div className="grid gap-2">
+                                <div className="flex items-center gap-2">
+                                  <Input
+                                    id="edit-locations-mobile"
+                                    value={locationInput}
+                                    onChange={(e) => setLocationInput(e.target.value)}
+                                    placeholder="Add a location"
+                                  />
+                                  <Button type="button" variant="outline" onClick={handleAddLocation}>
+                                    Add
+                                  </Button>
+                                </div>
+                                {editingService.locations && editingService.locations.length > 0 && (
+                                  <div className="mt-2 flex flex-wrap gap-2">
+                                    {editingService.locations.map((location, index) => (
+                                      <div
+                                        key={index}
+                                        className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md"
+                                      >
+                                        <span className="text-sm">{location}</span>
+                                        <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-5 w-5 p-0"
+                                          onClick={() => handleRemoveLocation(index, true)}
+                                        >
+                                          <Trash className="h-3 w-3" />
+                                          <span className="sr-only">Remove</span>
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-service-image-mobile" className="text-sm font-medium">
+                                Service Image
+                              </label>
+                              <div className="grid gap-2">
+                                <div className="flex items-center gap-4">
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => document.getElementById("edit-service-image-mobile").click()}
+                                  >
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    Change Image
+                                  </Button>
+                                  <input
+                                    type="file"
+                                    id="edit-service-image-mobile"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                  />
+                                </div>
+
+                                {imagePreview && (
+                                  <div className="mt-2 relative">
+                                    <img
+                                      src={imagePreview || "/placeholder.svg"}
+                                      alt="Preview"
+                                      className="w-full h-48 object-cover rounded-md"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="grid gap-2">
+                              <label htmlFor="edit-provider-image-mobile" className="text-sm font-medium">
+                                Provider Image
+                              </label>
+                              <div className="grid gap-2">
+                                <div className="flex items-center gap-4">
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => document.getElementById("edit-provider-image-mobile").click()}
+                                  >
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    Change Provider Image
+                                  </Button>
+                                  <input
+                                    type="file"
+                                    id="edit-provider-image-mobile"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleProviderImageChange}
+                                  />
+                                </div>
+
+                                {providerImagePreview && (
+                                  <div className="mt-2 relative">
+                                    <img
+                                      src={providerImagePreview || "/placeholder.svg"}
+                                      alt="Provider Preview"
+                                      className="w-full h-48 object-cover rounded-md"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </ScrollArea>
+                      </div>
+                    )}
+
+                    <DialogFooter className="mt-6">
+                      <DialogClose asChild>
+                        <Button variant="outline">Cancel</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          onClick={handleUpdateService}
+                          disabled={
+                            !editingService?.title.trim() ||
+                            !editingService?.category ||
+                            !editingService?.providerName.trim()
+                          }
+                        >
+                          Update Service
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
+                  onClick={() => handleDeleteService(service._id)}
+                >
+                  <Trash className="h-4 w-4" />
+                  <span className="sr-only">Delete</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default Services
+

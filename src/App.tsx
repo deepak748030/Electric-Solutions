@@ -21,6 +21,7 @@ import AdminServices from "./pages/admin/Services";
 import Orders from "./pages/admin/Orders";
 import Settings from "./pages/admin/Settings";
 import Profile from "./pages/admin/Profile";
+import UserOrders from "./pages/UserOrders";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,8 @@ const App = () => (
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-          
+          <Route path="/profile" element={<UserOrders />} />
+
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
@@ -49,7 +51,7 @@ const App = () => (
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
           </Route>
-          
+
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>

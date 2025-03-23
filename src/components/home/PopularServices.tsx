@@ -1,6 +1,8 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ServiceCard from '@/components/common/ServiceCard';
+import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const services = [
   {
@@ -39,6 +41,22 @@ const services = [
 ];
 
 const PopularServices = () => {
+
+  const [services, setServices] = useState([]);
+
+  const getFeaturedServices2 = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/services?type=popular&limit=6`);
+      setServices(response.data?.services);
+    } catch (error) {
+      console.error('Error fetching featured services:', error);
+    }
+  }
+
+  useEffect(() => {
+    getFeaturedServices2()
+  }, []);
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -48,11 +66,11 @@ const PopularServices = () => {
             The following are the Popular services offered by Pro Found Expert.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <ServiceCard
-              key={service.id}
+              key={service._id}
               title={service.title}
               price={service.price}
               image={service.image}

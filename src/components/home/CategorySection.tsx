@@ -5,70 +5,29 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
-
-const categories = [
-  {
-    id: 1,
-    title: 'Air Conditioner Repair',
-    image: '/public/lovable-uploads/5a0f916a-7a99-4eb3-b204-8fc666f610fc.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 2,
-    title: 'Air Purifier',
-    image: '/public/lovable-uploads/57758589-e6a5-40ce-96c9-f4b63dff38b8.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 3,
-    title: 'Car Detailing',
-    image: '/public/lovable-uploads/ff5f5a21-0a54-4f89-9c38-f454c9379861.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 4,
-    title: 'Car Repair',
-    image: '/public/lovable-uploads/5a0f916a-7a99-4eb3-b204-8fc666f610fc.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 5,
-    title: 'Refrigerator Repair',
-    image: '/public/lovable-uploads/5a0f916a-7a99-4eb3-b204-8fc666f610fc.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 6,
-    title: 'Washing Machine Repair',
-    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 7,
-    title: 'TV Repair',
-    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  },
-  {
-    id: 8,
-    title: 'Plumbing Services',
-    image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
-    iconImage: '/public/lovable-uploads/462fc7e3-fd43-4328-abdf-6ce07da6a3cd.png',
-    servicesCount: '1+ Services'
-  }
-];
+import axios from 'axios'
+const API_URL = import.meta.env.VITE_API_URL;
 
 const CategorySection = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [carouselApi, setCarouselApi] = useState<any>(null);
   const isMobile = useIsMobile();
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/categories`); // Adjust the endpoint as needed
+      if (response.data) {
+        setCategories(response.data?.categories);
+      }
+      if (!response.data || response.data.length === 0) {
+        throw new Error("No categories found");
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return []; // Return an empty array on error
+    }
+  }
 
   // Update active slide when carousel changes
   useEffect(() => {
@@ -90,6 +49,9 @@ const CategorySection = () => {
     carouselApi.scrollTo(activeSlide);
   }, [activeSlide, carouselApi]);
 
+  useEffect(() => {
+    getCategories()
+  }, []);
   return (
     <section className="py-16 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
       <div className="container mx-auto px-4">
@@ -113,7 +75,7 @@ const CategorySection = () => {
             <CarouselContent className="-ml-4">
               {categories.map((category) => (
                 <CarouselItem
-                  key={category.id}
+                  key={category._id}
                   className={`pl-4 ${isMobile ? 'basis-full' : 'basis-1/2 md:basis-1/3 lg:basis-1/4'}`}
                 >
                   <div className="p-1 h-full">
