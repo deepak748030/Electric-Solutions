@@ -1,5 +1,5 @@
 "use client"
-
+// edit profile 
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { Card, CardContent } from "@/components/ui/card"
@@ -496,7 +496,7 @@ export default function UserOrders() {
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() => setIsEditingProfile(true)}
-                                                disabled={!hasPendingOrder}
+                                                // disabled={!hasPendingOrder}
                                                 className="hidden md:flex items-center gap-1"
                                             >
                                                 <Pencil className="h-4 w-4" />
