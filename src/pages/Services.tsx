@@ -12,16 +12,9 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination"
 import axios from "axios"
+import { toast } from "sonner"
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-interface OrderFormData {
-  customer: string;
-  email: string;
-  phone: string;
-  address: string;
-  date: string;
-}
 
 const Services = () => {
   const navigate = useNavigate()
@@ -34,19 +27,8 @@ const Services = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("")
   const [selectedOthers, setSelectedOthers] = useState<string>("")
   const [searchQuery, setSearchQuery] = useState<string>("")
-  const [showOrderModal, setShowOrderModal] = useState(false)
-  const [selectedService, setSelectedService] = useState(null)
   const [userData, setUserData] = useState<any | null>(null)
-  const [orderFormData, setOrderFormData] = useState<OrderFormData>({
-    customer: "",
-    email: "",
-    phone: "",
-    address: "",
-    date: new Date().toISOString().split('T')[0]
-  })
-  const [orderLoading, setOrderLoading] = useState(false)
-  const [orderError, setOrderError] = useState("")
-  const [orderSuccess, setOrderSuccess] = useState(false)
+  const [bookingInProgress, setBookingInProgress] = useState(false)
 
   // Get unique categories and locations from services
   const availableCategories = [...new Set(services.map(service => service.category))]
@@ -84,38 +66,28 @@ const Services = () => {
     updateUrlParams(selectedLocation, value)
   }
 
-  // Handle book now click
-  const handleBookNowClick = (service) => {
-    if (!userData) {
-      navigate("/auth/login")
-      return
-    }
-    setSelectedService(service)
-    setShowOrderModal(true)
-  }
+  // Handle direct booking
+  const handleDirectBooking = async (service) => {
+    if (bookingInProgress) return;
 
-  // Handle order form submission
-  const handleOrderSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
     if (!userData) {
       navigate("/auth/login")
       return
     }
 
-    setOrderLoading(true)
-    setOrderError("")
+    setBookingInProgress(true)
 
     try {
       const orderData = {
         userId: userData?._id,
-        customer: userData?.name || orderFormData.customer,
-        email: userData?.email || orderFormData.email,
-        phone: userData?.phone || orderFormData.phone,
-        service: selectedService.title,
-        price: parseInt(selectedService.price.replace(/[^\d]/g, "")),
-        date: new Date(orderFormData.date).toISOString(),
+        customer: userData?.name,
+        email: userData?.email,
+        phone: userData?.phone || "",
+        service: service.title,
+        price: parseInt(service.price.replace(/[^\d]/g, "")),
+        date: new Date().toISOString(),
         status: "Pending",
-        address: orderFormData.address
+        address: userData?.address || ""
       }
 
       await axios.post(`${API_URL}/orders`, orderData, {
@@ -124,26 +96,15 @@ const Services = () => {
         }
       })
 
-      setOrderSuccess(true)
-      setTimeout(() => {
-        setShowOrderModal(false)
-        setOrderSuccess(false)
-        setOrderFormData({
-          customer: "",
-          email: "",
-          phone: userData?.phone,
-          address: "",
-          date: new Date().toISOString().split('T')[0]
-        })
-      }, 2000)
+      toast.success("Service booked successfully!")
     } catch (error) {
       if (error.response?.status === 401) {
         navigate("/auth/login")
         return
       }
-      setOrderError(error.response?.data?.message || "Failed to create order")
+      toast.error(error.response?.data?.message || "Failed to book service")
     } finally {
-      setOrderLoading(false)
+      setBookingInProgress(false)
     }
   }
 
@@ -167,18 +128,6 @@ const Services = () => {
     getUserFromLocalStorage()
   }, [])
 
-  // Additional effect to ensure correct userData updates
-  useEffect(() => {
-    if (userData) {
-      console.log("User data updated:", userData)
-    }
-  }, [userData])
-
-
-  // Effect to fetch services and user data on component mount
-  useEffect(() => {
-    getServices()
-  }, [])
   // Apply filters to services
   const applyFilters = () => {
     let filtered = [...services]
@@ -254,8 +203,6 @@ const Services = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
-
-
 
   // Effect to apply filters when services or filter values change
   useEffect(() => {
@@ -436,9 +383,10 @@ const Services = () => {
                       fullWidth
                       variant="primary"
                       className="bg-brand-blue text-white"
-                      onClick={() => handleBookNowClick(service)}
+                      onClick={() => handleDirectBooking(service)}
+                      disabled={bookingInProgress}
                     >
-                      Book Now
+                      {bookingInProgress ? "Booking..." : "Book Now"}
                     </Button>
                   </div>
                 </div>
@@ -486,96 +434,6 @@ const Services = () => {
           )}
         </div>
       </main>
-
-      {/* Order Modal */}
-      {showOrderModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
-            <button
-              onClick={() => setShowOrderModal(false)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
-            >
-              <X size={20} />
-            </button>
-
-            <h2 className="text-2xl font-bold mb-4">Book Service</h2>
-            <p className="mb-4 text-gray-600">
-              {selectedService?.title} - {selectedService?.price}
-            </p>
-
-            {orderSuccess ? (
-              <div className="text-green-600 text-center py-4">
-                Order placed successfully! Redirecting...
-              </div>
-            ) : (
-              <form onSubmit={handleOrderSubmit}>
-                <div className="space-y-4">
-                  {/* 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md"
-                      value={orderFormData.phone}
-                      onChange={(e) =>
-                        setOrderFormData({ ...orderFormData, phone: e.target.value })
-                      }
-                    />
-                  </div> */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address
-                    </label>
-                    <textarea
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md"
-                      rows={3}
-                      value={orderFormData.address}
-                      onChange={(e) =>
-                        setOrderFormData({ ...orderFormData, address: e.target.value })
-                      }
-                    />
-                  </div>
-
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Preferred Date
-                    </label>
-                    <input
-                      type="date"
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md"
-                      min={new Date().toISOString().split('T')[0]}
-                      value={orderFormData.date}
-                      onChange={(e) =>
-                        setOrderFormData({ ...orderFormData, date: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  {orderError && (
-                    <p className="text-red-600 text-sm">{orderError}</p>
-                  )}
-
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="primary"
-                    className="bg-brand-blue text-white"
-                    disabled={orderLoading}
-                  >
-                    {orderLoading ? "Placing Order..." : "Place Order"}
-                  </Button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>
