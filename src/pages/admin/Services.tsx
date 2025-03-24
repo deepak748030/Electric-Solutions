@@ -132,7 +132,7 @@ const Services = () => {
         formData.append("providerImage", selectedProviderImage)
       }
 
-      const res = await axios.post("${API_URL}/services", formData, {
+      const res = await axios.post(`${API_URL}/services`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -143,7 +143,7 @@ const Services = () => {
 
         setNewService({
           title: "",
-          price: "₹249",
+          price: "",
           category: "",
           providerName: "",
           type: "popular",
