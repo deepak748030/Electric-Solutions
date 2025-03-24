@@ -5,14 +5,6 @@ import Footer from '@/components/layout/Footer';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, MapPin, Phone, Star, Check } from 'lucide-react';
 import Button from '@/components/common/Button';
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage
-} from '@/components/ui/breadcrumb';
 import Reviews from '@/components/home/Reviews';
 
 const About = () => {
