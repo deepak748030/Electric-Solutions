@@ -118,15 +118,6 @@ export default function UserOrders() {
 
     // Update profile information
     const handleUpdateProfile = async () => {
-        if (!hasPendingOrder) {
-            toast({
-                title: "Cannot Update Profile",
-                description: "Profile can only be updated when you have pending orders.",
-                variant: "destructive",
-            })
-            return
-        }
-
         setIsProfileUpdateLoading(true)
         try {
             // Get the current auth data
@@ -502,11 +493,7 @@ export default function UserOrders() {
                                                 <Pencil className="h-4 w-4" />
                                                 Edit Profile
                                             </Button>
-                                            {!hasPendingOrder && (
-                                                <p className="text-xs text-gray-500 hidden md:block">
-                                                    (Editing available only with pending orders)
-                                                </p>
-                                            )}
+
                                             {/* Logout button for larger screens */}
                                             <button className="hidden md:block bg-red-500 text-white px-4 py-2 rounded" onClick={onLogout}>
                                                 Logout
