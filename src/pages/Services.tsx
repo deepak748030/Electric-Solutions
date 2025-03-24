@@ -1,135 +1,297 @@
-import React, { useState } from 'react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage
-} from '@/components/ui/breadcrumb';
-import { Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
-import ServiceCard from '@/components/common/ServiceCard';
-import { Card, CardContent } from '@/components/ui/card';
-import Button from '@/components/common/Button';
+import { useEffect, useState } from "react"
+import Navbar from "@/components/layout/Navbar"
+import Footer from "@/components/layout/Footer"
+import { Link, useSearchParams, useNavigate } from "react-router-dom"
+import { Search, X } from "lucide-react"
+import Button from "@/components/common/Button"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
-  PaginationNext
-} from '@/components/ui/pagination';
+  PaginationNext,
+} from "@/components/ui/pagination"
+import axios from "axios"
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+interface OrderFormData {
+  customer: string;
+  email: string;
+  phone: string;
+  address: string;
+  date: string;
+}
 
 const Services = () => {
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
-  const [selectedOthers, setSelectedOthers] = useState<string>('');
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [services, setServices] = useState([])
+  const [filteredServices, setFilteredServices] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedLocation, setSelectedLocation] = useState<string>(searchParams.get("location") || "")
+  const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get("category") || "")
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>("")
+  const [selectedOthers, setSelectedOthers] = useState<string>("")
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [showOrderModal, setShowOrderModal] = useState(false)
+  const [selectedService, setSelectedService] = useState(null)
+  const [userData, setUserData] = useState<any | null>(null)
+  const [orderFormData, setOrderFormData] = useState<OrderFormData>({
+    customer: "",
+    email: "",
+    phone: "",
+    address: "",
+    date: new Date().toISOString().split('T')[0]
+  })
+  const [orderLoading, setOrderLoading] = useState(false)
+  const [orderError, setOrderError] = useState("")
+  const [orderSuccess, setOrderSuccess] = useState(false)
 
-  const services = [
-    {
-      id: 1,
-      title: 'Washing Machine Repair',
-      slug: 'washing-machine-repair',
-      price: '₹249',
-      image: '/public/lovable-uploads/5ab649f6-3995-4460-afd2-3216210b593a.png',
-      category: 'Appliance Repair',
-      providerName: 'Repairing Buddy',
-      providerImage: '/public/lovable-uploads/0bb15c92-01fe-4650-9664-8f0b74c9ab6d.png',
-      rating: 0,
-      reviews: 0,
-      tag: 'Washing Machine Repair'
-    },
-    {
-      id: 2,
-      title: 'Refrigerator Repair',
-      slug: 'refrigerator-repair',
-      price: '₹249',
-      image: '/public/lovable-uploads/5ab649f6-3995-4460-afd2-3216210b593a.png',
-      category: 'Appliance Repair',
-      providerName: 'Repairing Buddy',
-      providerImage: '/public/lovable-uploads/0bb15c92-01fe-4650-9664-8f0b74c9ab6d.png',
-      rating: 0,
-      reviews: 0,
-      tag: 'Refrigerator Repair'
-    },
-    {
-      id: 3,
-      title: 'AC Repair',
-      slug: 'ac-repair',
-      price: '₹249',
-      image: '/public/lovable-uploads/5ab649f6-3995-4460-afd2-3216210b593a.png',
-      category: 'Appliance Repair',
-      providerName: 'Repairing Buddy',
-      providerImage: '/public/lovable-uploads/0bb15c92-01fe-4650-9664-8f0b74c9ab6d.png',
-      rating: 0,
-      reviews: 0,
-      tag: 'Air Conditioner Repair'
-    },
-    {
-      id: 4,
-      title: 'RO Repair',
-      slug: 'ro-repair',
-      price: '₹249',
-      image: '/public/lovable-uploads/5ab649f6-3995-4460-afd2-3216210b593a.png',
-      category: 'Appliance Repair',
-      providerName: 'Repairing Buddy',
-      providerImage: '/public/lovable-uploads/0bb15c92-01fe-4650-9664-8f0b74c9ab6d.png',
-      rating: 0,
-      reviews: 0,
-      tag: 'RO Repair'
-    },
-    {
-      id: 5,
-      title: 'Plumber Services',
-      slug: 'plumber-services',
-      price: '₹249',
-      image: '/public/lovable-uploads/5ab649f6-3995-4460-afd2-3216210b593a.png',
-      category: 'Home Services',
-      providerName: 'Repairing Buddy',
-      providerImage: '/public/lovable-uploads/0bb15c92-01fe-4650-9664-8f0b74c9ab6d.png',
-      rating: 0,
-      reviews: 0,
-      tag: 'Plumber Service'
-    },
-    {
-      id: 6,
-      title: 'Car Detailing',
-      slug: 'car-detailing',
-      price: '₹249',
-      image: '/public/lovable-uploads/5ab649f6-3995-4460-afd2-3216210b593a.png',
-      category: 'Auto Services',
-      providerName: 'Repairing Buddy',
-      providerImage: '/public/lovable-uploads/0bb15c92-01fe-4650-9664-8f0b74c9ab6d.png',
-      rating: 0,
-      reviews: 0,
-      tag: 'Car Detailing'
+  // Get unique categories and locations from services
+  const availableCategories = [...new Set(services.map(service => service.category))]
+  const availableLocations = [...new Set(services.flatMap(service => service.locations || []))]
+
+  // Pagination settings
+  const servicesPerPage = 6
+
+  // Function to get services data
+  const getServices = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/services`);
+      setServices(response.data?.services || []);
+    } catch (error) {
+      console.error("Error fetching services:", error)
     }
-  ];
+  }
+
+  // Update URL parameters
+  const updateUrlParams = (location: string, category: string) => {
+    const params = new URLSearchParams()
+    if (location) params.set("location", location)
+    if (category) params.set("category", category)
+    setSearchParams(params)
+  }
+
+  // Handle filter changes
+  const handleLocationChange = (value: string) => {
+    setSelectedLocation(value)
+    updateUrlParams(value, selectedCategory)
+  }
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value)
+    updateUrlParams(selectedLocation, value)
+  }
+
+  // Handle book now click
+  const handleBookNowClick = (service) => {
+    if (!userData) {
+      navigate("/auth/login")
+      return
+    }
+    setSelectedService(service)
+    setShowOrderModal(true)
+  }
+
+  // Handle order form submission
+  const handleOrderSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!userData) {
+      navigate("/auth/login")
+      return
+    }
+
+    setOrderLoading(true)
+    setOrderError("")
+
+    try {
+      const orderData = {
+        userId: userData?._id,
+        customer: userData?.name || orderFormData.customer,
+        email: userData?.email || orderFormData.email,
+        phone: userData?.phone || orderFormData.phone,
+        service: selectedService.title,
+        price: parseInt(selectedService.price.replace(/[^\d]/g, "")),
+        date: new Date(orderFormData.date).toISOString(),
+        status: "Pending",
+        address: orderFormData.address
+      }
+
+      await axios.post(`${API_URL}/orders`, orderData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+
+      setOrderSuccess(true)
+      setTimeout(() => {
+        setShowOrderModal(false)
+        setOrderSuccess(false)
+        setOrderFormData({
+          customer: "",
+          email: "",
+          phone: userData?.phone,
+          address: "",
+          date: new Date().toISOString().split('T')[0]
+        })
+      }, 2000)
+    } catch (error) {
+      if (error.response?.status === 401) {
+        navigate("/auth/login")
+        return
+      }
+      setOrderError(error.response?.data?.message || "Failed to create order")
+    } finally {
+      setOrderLoading(false)
+    }
+  }
+
+  // Get user data from local storage
+  const getUserFromLocalStorage = async () => {
+    try {
+      const authData = localStorage.getItem('auth')
+      if (authData) {
+        const parsedData = JSON.parse(authData)
+        setUserData(parsedData?.user || null)
+      }
+    } catch (error) {
+      console.error('Error retrieving user data:', error)
+      setUserData(null)
+    }
+  }
+
+  // Effect to fetch services and user data on component mount
+  useEffect(() => {
+    getServices()
+    getUserFromLocalStorage()
+  }, [])
+
+  // Additional effect to ensure correct userData updates
+  useEffect(() => {
+    if (userData) {
+      console.log("User data updated:", userData)
+    }
+  }, [userData])
+
+
+  // Effect to fetch services and user data on component mount
+  useEffect(() => {
+    getServices()
+  }, [])
+  // Apply filters to services
+  const applyFilters = () => {
+    let filtered = [...services]
+
+    // Filter by location
+    if (selectedLocation) {
+      filtered = filtered.filter((service) =>
+        service.locations && service.locations.includes(selectedLocation)
+      )
+    }
+
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter((service) => service.category === selectedCategory)
+    }
+
+    // Filter by price range
+    if (selectedPriceRange) {
+      const [min, max] = selectedPriceRange.split("-").map((price) => Number.parseInt(price.replace(/[^\d]/g, "")))
+
+      filtered = filtered.filter((service) => {
+        const servicePrice = Number.parseInt(service.price.replace(/[^\d]/g, ""))
+        if (max) {
+          return servicePrice >= min && servicePrice <= max
+        } else {
+          // For "2000+" case
+          return servicePrice >= min
+        }
+      })
+    }
+
+    // Sort by "Others" filter
+    if (selectedOthers) {
+      switch (selectedOthers) {
+        case "most-popular":
+          filtered = filtered.filter((service) => service.type === "popular")
+          break
+        case "highest-rated":
+          filtered.sort((a, b) => b.rating - a.rating)
+          break
+        case "newest":
+          filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          break
+        default:
+          break
+      }
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (service) =>
+          service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          service.category.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    }
+
+    setFilteredServices(filtered)
+    setCurrentPage(1) // Reset to first page when filters change
+  }
+
+  // Get current services for pagination
+  const getCurrentServices = () => {
+    const indexOfLastService = currentPage * servicesPerPage
+    const indexOfFirstService = indexOfLastService - servicesPerPage
+    return filteredServices.slice(indexOfFirstService, indexOfLastService)
+  }
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredServices.length / servicesPerPage)
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber)
+  }
+
+
+
+  // Effect to apply filters when services or filter values change
+  useEffect(() => {
+    if (services.length > 0) {
+      applyFilters()
+    }
+  }, [services, selectedCategory, selectedPriceRange, selectedOthers, searchQuery, selectedLocation])
+
+  // Effect to handle URL parameter changes
+  useEffect(() => {
+    const locationParam = searchParams.get("location")
+    const categoryParam = searchParams.get("category")
+
+    if (locationParam !== selectedLocation) {
+      setSelectedLocation(locationParam || "")
+    }
+    if (categoryParam !== selectedCategory) {
+      setSelectedCategory(categoryParam || "")
+    }
+  }, [searchParams])
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
       {/* Breadcrumb Banner */}
-      <div className="bg-gray-800 py-12 mb-8 mt-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">Our Services</h1>
-          <Breadcrumb className="justify-center">
-            <BreadcrumbList className="justify-center text-gray-300">
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to="/" className="text-white hover:text-brand-blue">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-brand-blue">Our Services</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+      <div className="bg-gray-800 text-white py-20 px-4 mt-20">
+        <div className="container mx-auto">
+          <h1 className="text-3xl font-bold mb-2">Our Services</h1>
+          <div className="flex items-center text-sm space-x-2">
+            <Link to="/" className="hover:text-brand-blue transition-colors">
+              Home
+            </Link>
+            <span>/</span>
+            <span className="text-brand-blue">Our Services</span>
+          </div>
         </div>
       </div>
 
@@ -139,48 +301,45 @@ const Services = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {/* Location Filter */}
             <div>
-              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">
-                Location
-              </div>
+              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">Location</div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
                 <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
                   value={selectedLocation}
-                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  onChange={(e) => handleLocationChange(e.target.value)}
                 >
-                  <option value="">Select</option>
-                  <option value="delhi">Delhi</option>
-                  <option value="mumbai">Mumbai</option>
-                  <option value="bangalore">Bangalore</option>
-                  <option value="hyderabad">Hyderabad</option>
+                  <option value="">All Locations</option>
+                  {availableLocations.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
             {/* Category Filter */}
             <div>
-              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">
-                Category
-              </div>
+              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">Category</div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
                 <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
                 >
-                  <option value="">Select</option>
-                  <option value="appliance-repair">Appliance Repair</option>
-                  <option value="home-services">Home Services</option>
-                  <option value="auto-services">Auto Services</option>
+                  <option value="">All Categories</option>
+                  {availableCategories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
             {/* Price Range Filter */}
             <div>
-              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">
-                Price Range
-              </div>
+              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">Price Range</div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
                 <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
@@ -198,9 +357,7 @@ const Services = () => {
 
             {/* Others Filter */}
             <div>
-              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">
-                Others
-              </div>
+              <div className="bg-brand-blue text-white p-3 rounded-t-lg font-medium text-center">Others</div>
               <div className="border border-gray-200 rounded-b-lg p-2 bg-gray-50">
                 <select
                   className="w-full p-2 rounded bg-white border border-gray-200"
@@ -216,86 +373,213 @@ const Services = () => {
             </div>
           </div>
 
+          {/* Search Input */}
+          <div className="mb-8">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search services..."
+                className="w-full p-3 pl-10 border border-gray-200 rounded-lg"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+            </div>
+          </div>
+
           {/* Services Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {services.map((service) => (
-              <div key={service.id} className="border border-gray-200 rounded-lg overflow-hidden">
-                <div className="relative">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-full h-52 object-cover"
-                  />
-                  <div className="absolute top-4 left-4 bg-brand-blue/90 text-white text-xs px-3 py-1 rounded-full">
-                    {service.tag}
-                  </div>
-                  <div className="absolute bottom-4 right-4 bg-white font-bold text-brand-blue px-3 py-1 rounded-full shadow">
-                    {service.price}
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-
-                  <div className="flex items-center mb-4">
+            {getCurrentServices().length > 0 ? (
+              getCurrentServices().map((service) => (
+                <div key={service._id} className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="relative">
                     <img
-                      src={service.providerImage}
-                      alt={service.providerName}
-                      className="w-6 h-6 rounded-full mr-2"
+                      src={service.image || "/placeholder.svg?height=200&width=300"}
+                      alt={service.title}
+                      className="w-full h-52 object-cover"
                     />
-                    <span className="text-sm text-gray-600">{service.providerName}</span>
-
-                    <div className="ml-auto flex">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <svg
-                          key={star}
-                          className="w-4 h-4 text-yellow-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                          />
-                        </svg>
-                      ))}
-                      <span className="ml-1 text-xs text-gray-500">({service.reviews})</span>
+                    <div className="absolute top-4 left-4 bg-brand-blue/90 text-white text-xs px-3 py-1 rounded-full">
+                      {service.category}
+                    </div>
+                    <div className="absolute bottom-4 right-4 bg-white font-bold text-brand-blue px-3 py-1 rounded-full shadow">
+                      {service.price}
                     </div>
                   </div>
 
-                  <Button fullWidth variant="primary" className="bg-brand-blue text-white">
-                    Book Now
-                  </Button>
+                  <div className="p-4">
+                    <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+
+                    <div className="flex items-center mb-4">
+                      <img
+                        src={service.providerImage || "/placeholder.svg?height=50&width=50"}
+                        alt={service.providerName}
+                        className="w-6 h-6 rounded-full mr-2"
+                      />
+                      <span className="text-sm text-gray-600">{service.providerName}</span>
+
+                      <div className="ml-auto flex">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <svg
+                            key={star}
+                            className={`w-4 h-4 ${star <= Math.round(service.rating) ? "text-yellow-400" : "text-gray-300"}`}
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                        <span className="ml-1 text-xs text-gray-500">({service.reviews})</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      fullWidth
+                      variant="primary"
+                      className="bg-brand-blue text-white"
+                      onClick={() => handleBookNowClick(service)}
+                    >
+                      Book Now
+                    </Button>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-10">
+                <p className="text-gray-500">No services found matching your criteria.</p>
               </div>
-            ))}
+            )}
           </div>
 
           {/* Pagination */}
-          <div className="flex flex-start my-8 justify-start  ">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationLink isActive>1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">2</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+          {filteredServices.length > 0 && (
+            <div className="flex flex-start my-8 justify-start">
+              <Pagination>
+                <PaginationContent>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        isActive={currentPage === page}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handlePageChange(page)
+                        }}
+                        href="#"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  {currentPage < totalPages && (
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handlePageChange(currentPage + 1)
+                        }}
+                      />
+                    </PaginationItem>
+                  )}
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </main>
 
+      {/* Order Modal */}
+      {showOrderModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+            <button
+              onClick={() => setShowOrderModal(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+            >
+              <X size={20} />
+            </button>
+
+            <h2 className="text-2xl font-bold mb-4">Book Service</h2>
+            <p className="mb-4 text-gray-600">
+              {selectedService?.title} - {selectedService?.price}
+            </p>
+
+            {orderSuccess ? (
+              <div className="text-green-600 text-center py-4">
+                Order placed successfully! Redirecting...
+              </div>
+            ) : (
+              <form onSubmit={handleOrderSubmit}>
+                <div className="space-y-4">
+                  {/* 
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      value={orderFormData.phone}
+                      onChange={(e) =>
+                        setOrderFormData({ ...orderFormData, phone: e.target.value })
+                      }
+                    />
+                  </div> */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Address
+                    </label>
+                    <textarea
+                      required
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      rows={3}
+                      value={orderFormData.address}
+                      onChange={(e) =>
+                        setOrderFormData({ ...orderFormData, address: e.target.value })
+                      }
+                    />
+                  </div>
+
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Preferred Date
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      min={new Date().toISOString().split('T')[0]}
+                      value={orderFormData.date}
+                      onChange={(e) =>
+                        setOrderFormData({ ...orderFormData, date: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  {orderError && (
+                    <p className="text-red-600 text-sm">{orderError}</p>
+                  )}
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="primary"
+                    className="bg-brand-blue text-white"
+                    disabled={orderLoading}
+                  >
+                    {orderLoading ? "Placing Order..." : "Place Order"}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default Services;
+export default Services

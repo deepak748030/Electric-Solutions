@@ -22,10 +22,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 const Services = () => {
   const [services, setServices] = useState([])
-
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
   const getServices = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/services`)
+      const res = await axios.get(`${API_URL}/services`)
       if (res.data.success) {
         setServices(res.data.services)
         console.log(res.data.services)
@@ -132,7 +132,7 @@ const Services = () => {
         formData.append("providerImage", selectedProviderImage)
       }
 
-      const res = await axios.post("http://localhost:3000/api/services", formData, {
+      const res = await axios.post("${API_URL}/services", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -191,7 +191,7 @@ const Services = () => {
         formData.append("providerImage", selectedProviderImage)
       }
 
-      const res = await axios.patch(`http://localhost:3000/api/services/${editingService._id}`, formData, {
+      const res = await axios.patch(`${API_URL}/services/${editingService._id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -212,7 +212,7 @@ const Services = () => {
 
   const handleDeleteService = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:3000/api/services/${id}`)
+      const res = await axios.delete(`${API_URL}/services/${id}`)
       if (res.data.success) {
         getServices()
       }

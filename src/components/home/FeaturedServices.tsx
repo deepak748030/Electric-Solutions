@@ -1,60 +1,77 @@
-
 import React, { useEffect, useState } from 'react';
 import ServiceCard from '@/components/common/ServiceCard';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
-// const services = [
-//   {
-//     id: 1,
-//     title: 'Washing Machine Repair',
-//     price: '₹249',
-//     image: '/public/lovable-uploads/aebc62a7-752a-4cce-bb1b-eddb3cfa4c3a.png',
-//     category: 'Washing Machine Repair',
-//     providerName: 'Repairing Buddy',
-//     providerImage: '/public/lovable-uploads/c2ffb8dc-61c7-4491-9206-a6eb5197f59a.png',
-//     rating: 0,
-//     reviews: 0
-//   },
-//   {
-//     id: 2,
-//     title: 'Refrigerator Repair',
-//     price: '₹249',
-//     image: '/public/lovable-uploads/5a0f916a-7a99-4eb3-b204-8fc666f610fc.png',
-//     category: 'Refrigerator Repair',
-//     providerName: 'Repairing Buddy',
-//     providerImage: '/public/lovable-uploads/c2ffb8dc-61c7-4491-9206-a6eb5197f59a.png',
-//     rating: 0,
-//     reviews: 0
-//   },
-//   {
-//     id: 3,
-//     title: 'AC Repair',
-//     price: '₹249',
-//     image: '/public/lovable-uploads/57758589-e6a5-40ce-96c9-f4b63dff38b8.png',
-//     category: 'Air Conditioner Repair',
-//     providerName: 'Repairing Buddy',
-//     providerImage: '/public/lovable-uploads/c2ffb8dc-61c7-4491-9206-a6eb5197f59a.png',
-//     rating: 0,
-//     reviews: 0
-//   }
-// ];
+import { toast } from '@/components/ui/use-toast';
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 const FeaturedServices = () => {
   const [services, setServices] = useState([]);
+  const [userData, setUserData] = useState(null);
 
-  const getFeaturedServices2 = async () => {
+  // Fetch services
+  const getServices = async () => {
     try {
       const response = await axios.get(`${API_URL}/services?type=featured&limit=6`);
       setServices(response.data?.services);
     } catch (error) {
       console.error('Error fetching featured services:', error);
     }
-  }
+  };
 
+  // Get user data from local storage
+  const getUserFromLocalStorage = async () => {
+    try {
+      const authData = localStorage.getItem('auth');
+      if (authData) {
+        const parsedData = JSON.parse(authData);
+        setUserData(parsedData?.user || null);
+      }
+    } catch (error) {
+      console.error('Error retrieving user data:', error);
+      setUserData(null);
+    }
+  };
+
+  const handleBookNowClick = async (service) => {
+    if (!userData) {
+      toast({ title: 'Booking Failed', description: 'User data not available. Please log in.', variant: 'destructive' });
+      return;
+    }
+
+    try {
+      const bookingData = {
+        userId: userData._id,
+        customer: userData.name,
+        email: userData.email,
+        phone: userData.phone,
+        service: service.title,
+        price: service.price,
+        date: new Date().toISOString(),
+        status: 'Pending',
+        address: userData.address
+      };
+
+      const response = await axios.post(`${API_URL}/orders`, bookingData);
+      toast({ title: 'Booking Successful', description: response.data?.message || 'Your service has been booked successfully.' });
+    } catch (error) {
+      toast({ title: 'Booking Failed', description: error.response?.data?.message || 'Failed to book the service.', variant: 'destructive' });
+    }
+  };
+
+  // Effect to fetch services and user data on component mount
   useEffect(() => {
-    getFeaturedServices2()
+    getServices();
+    getUserFromLocalStorage();
   }, []);
+
+  // Additional effect to ensure correct userData updates
+  useEffect(() => {
+    if (userData) {
+      console.log('User data updated:', userData);
+    }
+  }, [userData]);
+
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
@@ -79,6 +96,7 @@ const FeaturedServices = () => {
               reviews={service.reviews}
               className="animate-fade-in"
               style={{ animationDelay: `${0.1 * index}s` }}
+              onBookNow={() => handleBookNowClick(service)}
             />
           ))}
         </div>

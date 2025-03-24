@@ -1,4 +1,3 @@
-
 import React from 'react';
 import StarRating from '@/components/ui/StarRating';
 import Button from '@/components/common/Button';
@@ -15,6 +14,7 @@ type ServiceCardProps = {
   reviews: number;
   className?: string;
   style?: React.CSSProperties;
+  onBookNow?: () => void; // Add this prop
 };
 
 const ServiceCard = ({
@@ -27,7 +27,8 @@ const ServiceCard = ({
   rating,
   reviews,
   className,
-  style
+  style,
+  onBookNow
 }: ServiceCardProps) => {
   return (
     <div
@@ -65,8 +66,7 @@ const ServiceCard = ({
           <StarRating rating={rating} reviews={reviews} />
         </div>
 
-
-        <Button fullWidth className="transition-transform hover:translate-y-[-3px]">Book Now</Button>
+        <Button fullWidth className="transition-transform hover:translate-y-[-3px]" onClick={onBookNow}>Book Now</Button>
       </div>
     </div>
   );

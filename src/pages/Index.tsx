@@ -21,7 +21,7 @@ const Index = () => {
         <Stats />
         <PopularServices />
         <Reviews />
-        <BlogSection />
+        {/* <BlogSection /> */}
       </main>
       <Footer />
     </div>

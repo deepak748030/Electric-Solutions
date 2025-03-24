@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -25,6 +24,12 @@ import UserOrders from "./pages/UserOrders";
 
 const queryClient = new QueryClient();
 
+const AdminRoute = ({ element }) => {
+  const authData = localStorage.getItem('auth');
+  const user = authData ? JSON.parse(authData)?.user : null;
+  return user?.role === 'admin' ? element : <Navigate to="/auth/login" />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -43,13 +48,11 @@ const App = () => (
           <Route path="/profile" element={<UserOrders />} />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
+          <Route path="/admin" element={<AdminRoute element={<AdminLayout />} />}>
+            <Route index element={<AdminServices />} />
             <Route path="categories" element={<Categories />} />
-            <Route path="services" element={<AdminServices />} />
+            {/* <Route path="services" element={<AdminServices />} /> */}
             <Route path="orders" element={<Orders />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="profile" element={<Profile />} />
           </Route>
 
           {/* Catch-all route */}

@@ -24,13 +24,14 @@ const Orders = () => {
   const [orders, setOrders] = useState([])
   const [editingOrder, setEditingOrder] = useState(null)
   const [filterStatus, setFilterStatus] = useState("all")
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
   const getOrders = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/orders`)
+      const res = await axios.get(`${API_URL}/orders`)
       if (res.data.success) {
         setOrders(res.data.orders)
-        console.log(res.data.orders)
+        // console.log(res.data.orders)
       }
     } catch (error) {
       console.error("Error fetching orders:", error)
@@ -51,7 +52,7 @@ const Orders = () => {
     if (!editingOrder) return
 
     try {
-      const res = await axios.patch(`http://localhost:3000/api/orders/${editingOrder._id}`, {
+      const res = await axios.patch(`${API_URL}/orders/${editingOrder._id}`, {
         status: editingOrder.status,
       })
 

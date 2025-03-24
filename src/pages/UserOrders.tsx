@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Link } from "react-router-dom"
 import {
     Dialog,
     DialogContent,
@@ -23,15 +24,70 @@ import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "@/components/ui/use-toast"
+import Navbar from "@/components/layout/Navbar"
+import Footer from "@/components/layout/Footer"
+import { useNavigate } from "react-router-dom"
 
 export default function UserOrders() {
+    const API_URL = import.meta.env.VITE_API_URL;
+
     // User profile state
     const [profile, setProfile] = useState({
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "+91 9876543210",
+        name: "not available",
+        email: "not available",
+        phone: "+91 ",
         avatar: "/placeholder.svg?height=200&width=200",
+        address: "not available",
     })
+    const [userId, setUserId] = useState()
+
+    // Profile editing state
+    const [isEditingProfile, setIsEditingProfile] = useState(false)
+    const [editedProfile, setEditedProfile] = useState({ ...profile })
+    const [isProfileUpdateLoading, setIsProfileUpdateLoading] = useState(false)
+
+    // Order editing state
+    const [editingOrder, setEditingOrder] = useState(null)
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+    const [orderToDelete, setOrderToDelete] = useState(null)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const getDataFromLocalStorage = () => {
+            try {
+                const res = localStorage.getItem("auth")
+                if (res) {
+                    const data = JSON.parse(res)
+                    if (data?.user?._id) {
+                        setUserId(data.user._id)
+                        const userData = {
+                            _id: data.user?._id || "",
+                            name: data.user?.name || "Not Available",
+                            email: data.user?.email || "Not Available",
+                            phone: data.user?.phone || "+91 XXXXXXXXXX ",
+                            avatar: data.user?.avatar || "/placeholder.svg?height=200&width=200",
+                            address: data.user?.address || "Not Available",
+                        }
+                        setProfile(userData)
+                        setEditedProfile(userData)
+                    }
+                }
+            } catch (error) {
+                console.error("Error parsing user data:", error)
+            }
+        }
+
+        getDataFromLocalStorage()
+    }, [])
+
+    useEffect(() => {
+        if (userId) {
+            getOrders()
+        }
+    }, [userId])
+
+
+
 
     // Orders state
     const [orders, setOrders] = useState([])
@@ -54,13 +110,79 @@ export default function UserOrders() {
         orders: false,
         addresses: false,
         addressAction: false,
+        orderAction: false,
     })
+
+    // Check if any order is pending (to enable profile editing)
+    const hasPendingOrder = orders.some((order) => order.status?.toLowerCase() === "pending")
+
+    // Update profile information
+    const handleUpdateProfile = async () => {
+        if (!hasPendingOrder) {
+            toast({
+                title: "Cannot Update Profile",
+                description: "Profile can only be updated when you have pending orders.",
+                variant: "destructive",
+            })
+            return
+        }
+
+        setIsProfileUpdateLoading(true)
+        try {
+            // Get the current auth data
+            const authData = JSON.parse(localStorage.getItem("auth"))
+
+            // Update the user data
+            const updatedUser = {
+                ...authData.user,
+                email: editedProfile.email,
+                phone: editedProfile.phone,
+                address: editedProfile.address,
+            }
+
+            // Update in localStorage
+            localStorage.setItem(
+                "auth",
+                JSON.stringify({
+                    ...authData,
+                    user: updatedUser,
+                }),
+            )
+
+            // Update API call
+            const res = await axios.patch(`${API_URL}/users/profile/${userId}`, {
+                email: editedProfile.email,
+                phone: editedProfile.phone,
+                address: editedProfile.address,
+            })
+
+            // Update state
+            setProfile(editedProfile)
+            setIsEditingProfile(false)
+
+            toast({
+                title: "Success",
+                description: "Profile updated successfully.",
+            })
+        } catch (error) {
+            console.error("Error updating profile:", error)
+            toast({
+                title: "Error",
+                description: "Failed to update profile. Please try again.",
+                variant: "destructive",
+            })
+        } finally {
+            setIsProfileUpdateLoading(false)
+        }
+    }
 
     // Fetch user orders
     const getOrders = async () => {
+        if (!userId) return
         setIsLoading((prev) => ({ ...prev, orders: true }))
+
         try {
-            const res = await axios.get(`/api/user/orders`)
+            const res = await axios.get(`${API_URL}/orders/user/${userId}`)
             if (res.data.success) {
                 setOrders(res.data.orders)
             }
@@ -73,6 +195,65 @@ export default function UserOrders() {
             })
         } finally {
             setIsLoading((prev) => ({ ...prev, orders: false }))
+        }
+    }
+
+    // Delete order
+    const handleDeleteOrder = async () => {
+        if (!orderToDelete) return
+
+        setIsLoading((prev) => ({ ...prev, orderAction: true }))
+        try {
+            const res = await axios.delete(`/api/orders/${orderToDelete._id}`)
+            if (res.data.success) {
+                setOrders(orders.filter((order) => order._id !== orderToDelete._id))
+                toast({
+                    title: "Success",
+                    description: "Order cancelled successfully.",
+                })
+                setIsDeleteDialogOpen(false)
+                setOrderToDelete(null)
+            }
+        } catch (error) {
+            console.error("Error deleting order:", error)
+            toast({
+                title: "Error",
+                description: "Failed to cancel order. Please try again.",
+                variant: "destructive",
+            })
+        } finally {
+            setIsLoading((prev) => ({ ...prev, orderAction: false }))
+        }
+    }
+
+    // Update order address only
+    const handleUpdateOrderAddress = async () => {
+        if (!editingOrder) return
+
+        setIsLoading((prev) => ({ ...prev, orderAction: true }))
+        try {
+            const updateData = {
+                address: editingOrder.address,
+            }
+
+            const res = await axios.patch(`${API_URL}/orders/${editingOrder._id}`, updateData)
+            if (res.data.success) {
+                setOrders(orders.map((order) => (order._id === editingOrder._id ? { ...order, ...updateData } : order)))
+                toast({
+                    title: "Success",
+                    description: "Order address updated successfully.",
+                })
+                setEditingOrder(null)
+            }
+        } catch (error) {
+            console.error("Error updating order:", error)
+            toast({
+                title: "Error",
+                description: "Failed to update order address. Please try again.",
+                variant: "destructive",
+            })
+        } finally {
+            setIsLoading((prev) => ({ ...prev, orderAction: false }))
         }
     }
 
@@ -220,6 +401,10 @@ export default function UserOrders() {
         }
     }
 
+    const onLogout = async () => {
+        await localStorage.removeItem("auth")
+        navigate("/auth/login")
+    }
     // Get status icon
     const getStatusIcon = (status) => {
         switch (status?.toLowerCase()) {
@@ -234,6 +419,11 @@ export default function UserOrders() {
             default:
                 return <AlertTriangle className="h-4 w-4" />
         }
+    }
+
+    // Check if order is editable (only pending orders can be edited)
+    const isOrderEditable = (order) => {
+        return order.status?.toLowerCase() === "pending"
     }
 
     // Filter orders by status
@@ -254,15 +444,16 @@ export default function UserOrders() {
     return (
         <div className="min-h-screen flex flex-col">
             {/* Breadcrumb Banner */}
-            <div className="bg-gray-800 py-24">
-                <div className="container mx-auto px-4">
-                    <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">My Account</h1>
-                    <div className="flex justify-center text-gray-300">
-                        <div className="flex items-center">
-                            <span className="text-white">Home</span>
-                            <span className="mx-2">/</span>
-                            <span className="text-blue-400">My Account</span>
-                        </div>
+            <Navbar />
+            <div className="bg-gray-800 text-white py-20 px-4 mt-20">
+                <div className="container mx-auto">
+                    <h1 className="text-3xl font-bold mb-2">Profile</h1>
+                    <div className="flex items-center text-sm space-x-2">
+                        <Link to="/" className="hover:text-brand-blue transition-colors">
+                            Home
+                        </Link>
+                        <span>/</span>
+                        <span className="text-brand-blue">Profile</span>
                     </div>
                 </div>
             </div>
@@ -273,42 +464,146 @@ export default function UserOrders() {
                     <div className="mb-10">
                         <Card>
                             <CardContent className="p-6">
-                                <div className="flex flex-col md:flex-row items-center gap-6">
-                                    <div className="rounded-full overflow-hidden h-24 w-24 bg-white border-4 border-blue-100">
-                                        <img
-                                            src={profile.avatar || "/placeholder.svg"}
-                                            alt={profile.name}
-                                            className="h-full w-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="flex-1 text-center md:text-left">
-                                        <h2 className="text-2xl font-bold">{profile.name}</h2>
-                                        <div className="flex flex-col md:flex-row gap-4 mt-2 text-gray-600">
-                                            <div className="flex items-center justify-center md:justify-start gap-2">
-                                                <Mail className="h-4 w-4 text-blue-600" />
-                                                <span>{profile.email}</span>
+                                {!isEditingProfile ? (
+                                    <div className="flex flex-col md:flex-row items-center gap-6">
+                                        <div className="rounded-full overflow-hidden h-24 w-24 bg-white border-4 border-blue-100">
+                                            <img
+                                                src={profile.avatar || "/placeholder.svg?height=200&width=200"}
+                                                alt={profile.name}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="flex-1 text-center md:text-left">
+                                            <h2 className="text-2xl font-bold">{profile.name}</h2>
+                                            <div className="flex flex-col md:flex-row gap-4 mt-2 text-gray-600">
+                                                <div className="flex items-center justify-center md:justify-start gap-2">
+                                                    <Mail className="h-4 w-4 text-blue-600" />
+                                                    <span>{profile.email}</span>
+                                                </div>
+                                                <div className="flex items-center justify-center md:justify-start gap-2">
+                                                    <Phone className="h-4 w-4 text-blue-600" />
+                                                    <span>{profile.phone}</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center justify-center md:justify-start gap-2">
-                                                <Phone className="h-4 w-4 text-blue-600" />
-                                                <span>{profile.phone}</span>
+                                            <div className="flex items-center justify-center md:justify-start gap-2 mt-2 text-gray-600">
+                                                <MapPin className="h-4 w-4 text-blue-600" />
+                                                <span>{profile.address}</span>
                                             </div>
                                         </div>
+                                        <div className="flex flex-col gap-2">
+                                            {/* Edit profile button */}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setIsEditingProfile(true)}
+                                                disabled={!hasPendingOrder}
+                                                className="hidden md:flex items-center gap-1"
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                                Edit Profile
+                                            </Button>
+                                            {!hasPendingOrder && (
+                                                <p className="text-xs text-gray-500 hidden md:block">
+                                                    (Editing available only with pending orders)
+                                                </p>
+                                            )}
+                                            {/* Logout button for larger screens */}
+                                            <button className="hidden md:block bg-red-500 text-white px-4 py-2 rounded" onClick={onLogout}>
+                                                Logout
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <h2 className="text-2xl font-bold text-center md:text-left">Edit Profile</h2>
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <label htmlFor="email" className="text-sm font-medium">
+                                                    Email Address
+                                                </label>
+                                                <Input
+                                                    id="email"
+                                                    type="email"
+                                                    value={editedProfile.email}
+                                                    onChange={(e) => setEditedProfile({ ...editedProfile, email: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label htmlFor="phone" className="text-sm font-medium">
+                                                    Phone Number
+                                                </label>
+                                                <Input
+                                                    id="phone"
+                                                    type="tel"
+                                                    value={editedProfile.phone}
+                                                    onChange={(e) => setEditedProfile({ ...editedProfile, phone: e.target.value })}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="address" className="text-sm font-medium">
+                                                Address
+                                            </label>
+                                            <Textarea
+                                                id="address"
+                                                value={editedProfile.address}
+                                                onChange={(e) => setEditedProfile({ ...editedProfile, address: e.target.value })}
+                                                rows={3}
+                                            />
+                                        </div>
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                    setIsEditingProfile(false)
+                                                    setEditedProfile({ ...profile })
+                                                }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                            <Button onClick={handleUpdateProfile} disabled={isProfileUpdateLoading}>
+                                                {isProfileUpdateLoading ? (
+                                                    <>
+                                                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
+                                                        Saving...
+                                                    </>
+                                                ) : (
+                                                    "Save Changes"
+                                                )}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                                {/* Mobile edit button and logout button */}
+                                {!isEditingProfile && (
+                                    <div className="md:hidden mt-4 flex flex-col gap-2">
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setIsEditingProfile(true)}
+                                            disabled={!hasPendingOrder}
+                                            className="w-full"
+                                        >
+                                            <Pencil className="h-4 w-4 mr-2" />
+                                            Edit Profile
+                                        </Button>
+                                        {!hasPendingOrder && (
+                                            <p className="text-xs text-gray-500 text-center">(Editing available only with pending orders)</p>
+                                        )}
+                                        <button className="w-full mt-2 bg-red-500 text-white px-4 py-2 rounded" onClick={onLogout}>
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
 
                     {/* Tabs for Orders and Addresses */}
                     <Tabs defaultValue="orders" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2 mb-8">
-                            <TabsTrigger value="orders" className="text-base py-3">
-                                My Orders
-                            </TabsTrigger>
-                            <TabsTrigger value="addresses" className="text-base py-3">
-                                My Addresses
-                            </TabsTrigger>
-                        </TabsList>
+                        {/* <TabsList className="grid w-full grid-cols-2 mb-8">
+                            <TabsTrigger value="orders">My Orders</TabsTrigger>
+                            <TabsTrigger value="addresses">My Addresses</TabsTrigger>
+                        </TabsList> */}
 
                         {/* Orders Tab */}
                         <TabsContent value="orders">
@@ -368,6 +663,7 @@ export default function UserOrders() {
                                                                 <TableHead>Date</TableHead>
                                                                 <TableHead>Status</TableHead>
                                                                 <TableHead>Address</TableHead>
+                                                                <TableHead>Actions</TableHead>
                                                             </TableRow>
                                                         </TableHeader>
                                                         <TableBody>
@@ -386,6 +682,78 @@ export default function UserOrders() {
                                                                         </Badge>
                                                                     </TableCell>
                                                                     <TableCell className="max-w-xs truncate">{order.address}</TableCell>
+                                                                    <TableCell>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <Dialog>
+                                                                                <DialogTrigger asChild>
+                                                                                    <Button
+                                                                                        variant="outline"
+                                                                                        size="sm"
+                                                                                        onClick={() => setEditingOrder({ ...order })}
+                                                                                        disabled={!isOrderEditable(order)}
+                                                                                    >
+                                                                                        <Pencil className="h-4 w-4" />
+                                                                                    </Button>
+                                                                                </DialogTrigger>
+                                                                                <DialogContent className="sm:max-w-[500px]">
+                                                                                    <DialogHeader>
+                                                                                        <DialogTitle>Update Order Address</DialogTitle>
+                                                                                        <DialogDescription>
+                                                                                            You can update the delivery address for this order.
+                                                                                        </DialogDescription>
+                                                                                    </DialogHeader>
+                                                                                    {editingOrder && (
+                                                                                        <div className="grid gap-4 py-4">
+                                                                                            <div className="grid gap-2">
+                                                                                                <label htmlFor="order-address" className="text-sm font-medium">
+                                                                                                    Address
+                                                                                                </label>
+                                                                                                <Textarea
+                                                                                                    id="order-address"
+                                                                                                    value={editingOrder.address}
+                                                                                                    onChange={(e) =>
+                                                                                                        setEditingOrder({
+                                                                                                            ...editingOrder,
+                                                                                                            address: e.target.value,
+                                                                                                        })
+                                                                                                    }
+                                                                                                    rows={3}
+                                                                                                />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    )}
+                                                                                    <DialogFooter>
+                                                                                        <DialogClose asChild>
+                                                                                            <Button variant="outline">Cancel</Button>
+                                                                                        </DialogClose>
+                                                                                        <Button onClick={handleUpdateOrderAddress} disabled={isLoading.orderAction}>
+                                                                                            {isLoading.orderAction ? (
+                                                                                                <>
+                                                                                                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
+                                                                                                    Updating...
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                "Update Address"
+                                                                                            )}
+                                                                                        </Button>
+                                                                                    </DialogFooter>
+                                                                                </DialogContent>
+                                                                            </Dialog>
+
+                                                                            <Button
+                                                                                variant="outline"
+                                                                                size="sm"
+                                                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                                                onClick={() => {
+                                                                                    setOrderToDelete(order)
+                                                                                    setIsDeleteDialogOpen(true)
+                                                                                }}
+                                                                                disabled={!isOrderEditable(order)}
+                                                                            >
+                                                                                <Trash className="h-4 w-4" />
+                                                                            </Button>
+                                                                        </div>
+                                                                    </TableCell>
                                                                 </TableRow>
                                                             ))}
                                                         </TableBody>
@@ -425,6 +793,77 @@ export default function UserOrders() {
                                                                 <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                                                                 <span className="text-sm">{order.address}</span>
                                                             </div>
+                                                        </div>
+
+                                                        <div className="mt-4 flex justify-end gap-2">
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        onClick={() => setEditingOrder({ ...order })}
+                                                                        disabled={!isOrderEditable(order)}
+                                                                    >
+                                                                        <Pencil className="h-4 w-4 mr-1" /> Edit Address
+                                                                    </Button>
+                                                                </DialogTrigger>
+                                                                <DialogContent className="sm:max-w-[500px]">
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Update Order Address</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            You can update the delivery address for this order.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                    {editingOrder && (
+                                                                        <div className="grid gap-4 py-4">
+                                                                            <div className="grid gap-2">
+                                                                                <label htmlFor="order-address-mobile" className="text-sm font-medium">
+                                                                                    Address
+                                                                                </label>
+                                                                                <Textarea
+                                                                                    id="order-address-mobile"
+                                                                                    value={editingOrder.address}
+                                                                                    onChange={(e) =>
+                                                                                        setEditingOrder({
+                                                                                            ...editingOrder,
+                                                                                            address: e.target.value,
+                                                                                        })
+                                                                                    }
+                                                                                    rows={3}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                    <DialogFooter>
+                                                                        <DialogClose asChild>
+                                                                            <Button variant="outline">Cancel</Button>
+                                                                        </DialogClose>
+                                                                        <Button onClick={handleUpdateOrderAddress} disabled={isLoading.orderAction}>
+                                                                            {isLoading.orderAction ? (
+                                                                                <>
+                                                                                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
+                                                                                    Updating...
+                                                                                </>
+                                                                            ) : (
+                                                                                "Update Address"
+                                                                            )}
+                                                                        </Button>
+                                                                    </DialogFooter>
+                                                                </DialogContent>
+                                                            </Dialog>
+
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                                onClick={() => {
+                                                                    setOrderToDelete(order)
+                                                                    setIsDeleteDialogOpen(true)
+                                                                }}
+                                                                disabled={!isOrderEditable(order)}
+                                                            >
+                                                                <Trash className="h-4 w-4 mr-1" /> Cancel
+                                                            </Button>
                                                         </div>
                                                     </CardContent>
                                                 </Card>
@@ -841,161 +1280,53 @@ export default function UserOrders() {
                 </div>
             </main>
 
-            {/* Footer */}
-            <footer className="bg-gray-800 text-white py-12">
-                <div className="container mx-auto px-4">
-                    <p className="text-center">© 2023 Your Service. All rights reserved.</p>
-                </div>
-            </footer>
+            {/* Delete Order Confirmation Dialog */}
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Cancel Order</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to cancel this order? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        {orderToDelete && (
+                            <div className="space-y-2">
+                                <div className="flex justify-between">
+                                    <span className="font-medium">Order ID:</span>
+                                    <span>{orderToDelete.orderId}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="font-medium">Service:</span>
+                                    <span>{orderToDelete.service}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="font-medium">Price:</span>
+                                    <span>₹{orderToDelete.price}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">No, Keep Order</Button>
+                        </DialogClose>
+                        <Button variant="destructive" onClick={handleDeleteOrder} disabled={isLoading.orderAction}>
+                            {isLoading.orderAction ? (
+                                <>
+                                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
+                                    Cancelling...
+                                </>
+                            ) : (
+                                "Yes, Cancel Order"
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Footer />
         </div>
     )
-}
-
-// API Routes (would be in separate files in a real Next.js app, but included here as requested)
-
-// GET /api/user/orders
-export async function GET(req) {
-    try {
-        // This would normally fetch from a database
-        const orders = [
-            {
-                _id: "ord1",
-                orderId: "ORD-12345",
-                service: "AC Repair",
-                price: "1499",
-                date: "2023-08-15",
-                status: "Completed",
-                address: "123 Main St, Apartment 4B, New Delhi, 110001",
-            },
-            {
-                _id: "ord2",
-                orderId: "ORD-12346",
-                service: "Refrigerator Service",
-                price: "999",
-                date: "2023-09-20",
-                status: "Pending",
-                address: "456 Park Avenue, House 7, Mumbai, 400001",
-            },
-            {
-                _id: "ord3",
-                orderId: "ORD-12347",
-                service: "Washing Machine Repair",
-                price: "1299",
-                date: "2023-10-05",
-                status: "In Progress",
-                address: "789 Garden Road, Flat 12C, Bangalore, 560001",
-            },
-        ]
-
-        return Response.json({ success: true, orders })
-    } catch (error) {
-        console.error("Error in GET /api/user/orders:", error)
-        return Response.json({ success: false, error: "Failed to fetch orders" }, { status: 500 })
-    }
-}
-
-// GET /api/user/addresses
-export async function getAddresses(req) {
-    try {
-        // This would normally fetch from a database
-        const addresses = [
-            {
-                _id: "addr1",
-                title: "Home",
-                fullAddress: "123 Main St, Apartment 4B",
-                city: "New Delhi",
-                state: "Delhi",
-                pincode: "110001",
-                isDefault: true,
-            },
-            {
-                _id: "addr2",
-                title: "Office",
-                fullAddress: "456 Business Park, Building C, Floor 5",
-                city: "Gurgaon",
-                state: "Haryana",
-                pincode: "122001",
-                isDefault: false,
-            },
-        ]
-
-        return Response.json({ success: true, addresses })
-    } catch (error) {
-        console.error("Error in GET /api/user/addresses:", error)
-        return Response.json({ success: false, error: "Failed to fetch addresses" }, { status: 500 })
-    }
-}
-
-// POST /api/user/addresses
-export async function addAddress(req) {
-    try {
-        const body = await req.json()
-
-        // Validate required fields
-        if (!body.fullAddress || !body.city || !body.pincode) {
-            return Response.json({ success: false, error: "Missing required fields" }, { status: 400 })
-        }
-
-        // This would normally save to a database
-        // For demo purposes, we'll just return success
-
-        return Response.json({
-            success: true,
-            message: "Address added successfully",
-            address: {
-                _id: "new-addr-" + Date.now(),
-                ...body,
-            },
-        })
-    } catch (error) {
-        console.error("Error in POST /api/user/addresses:", error)
-        return Response.json({ success: false, error: "Failed to add address" }, { status: 500 })
-    }
-}
-
-// PATCH /api/user/addresses/:id
-export async function updateAddress(req, { params }) {
-    try {
-        const { id } = params
-        const body = await req.json()
-
-        // Validate required fields
-        if (!body.fullAddress || !body.city || !body.pincode) {
-            return Response.json({ success: false, error: "Missing required fields" }, { status: 400 })
-        }
-
-        // This would normally update in a database
-        // For demo purposes, we'll just return success
-
-        return Response.json({
-            success: true,
-            message: "Address updated successfully",
-            address: {
-                _id: id,
-                ...body,
-            },
-        })
-    } catch (error) {
-        console.error("Error in PATCH /api/user/addresses/:id:", error)
-        return Response.json({ success: false, error: "Failed to update address" }, { status: 500 })
-    }
-}
-
-// DELETE /api/user/addresses/:id
-export async function deleteAddress(req, { params }) {
-    try {
-        const { id } = params
-
-        // This would normally delete from a database
-        // For demo purposes, we'll just return success
-
-        return Response.json({
-            success: true,
-            message: "Address deleted successfully",
-        })
-    } catch (error) {
-        console.error("Error in DELETE /api/user/addresses/:id:", error)
-        return Response.json({ success: false, error: "Failed to delete address" }, { status: 500 })
-    }
 }
 

@@ -21,24 +21,17 @@ const About = () => {
       <Navbar />
 
       {/* Breadcrumb Banner */}
-      <div className="bg-gray-800 py-24 mt-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">About Us</h1>
-          <Breadcrumb className="justify-center">
-            <BreadcrumbList className="justify-center text-gray-300">
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to="/" className="text-white hover:text-brand-blue">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-brand-blue">About Us</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+      <div className="bg-gray-800 text-white py-20 px-4 mt-20">
+        <div className="container mx-auto">
+          <h1 className="text-3xl font-bold mb-2">About Us</h1>
+          <div className="flex items-center text-sm space-x-2">
+            <Link to="/" className="hover:text-brand-blue transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-brand-blue">About Us</span>
+          </div>
         </div>
       </div>
+
 
       <main className="flex-grow">
         {/* Hero Section */}

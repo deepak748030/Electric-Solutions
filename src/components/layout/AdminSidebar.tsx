@@ -25,19 +25,14 @@ const AdminSidebar = () => {
 
   const menuItems = [
     {
-      name: 'Dashboard',
+      name: 'Services',
       path: '/admin',
-      icon: <LayoutDashboard className="h-5 w-5" />
+      icon: <PackageOpen className="h-5 w-5" />
     },
     {
       name: 'Categories',
       path: '/admin/categories',
       icon: <Tag className="h-5 w-5" />
-    },
-    {
-      name: 'Services',
-      path: '/admin/services',
-      icon: <PackageOpen className="h-5 w-5" />
     },
     {
       name: 'Orders',

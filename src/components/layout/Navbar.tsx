@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, Menu, X, LogIn, UserPlus } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { cn } from '@/lib/utils';
@@ -8,20 +7,40 @@ import { cn } from '@/lib/utils';
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState('user');
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => setMobileMenuOpen(false), [location]);
+
   useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location]);
+    const authData = localStorage.getItem('auth');
+    if (authData) {
+      const user = JSON.parse(authData)?.user;
+      if (user?.role) setUserRole(user.role);
+    }
+  }, []);
+
+  const handleUserClick = async () => {
+    try {
+      const authData = localStorage.getItem('auth');
+      if (authData) {
+        const user = JSON.parse(authData)?.user;
+        user ? navigate('/profile') : navigate('/auth/login');
+      } else {
+        navigate('/auth/login');
+      }
+    } catch (error) {
+      console.error('Error retrieving data from localStorage:', error);
+      navigate('/auth/login');
+    }
+  };
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -34,9 +53,7 @@ const Navbar = () => {
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled
-          ? 'bg-white shadow-md py-2'
-          : 'bg-transparent py-4'
+        isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
       )}
     >
       <div className="container mx-auto px-4 md:px-6">
@@ -44,7 +61,6 @@ const Navbar = () => {
           <Link to="/" className="flex items-center space-x-2">
             <h1 className="text-2xl md:text-3xl font-bold text-brand-blue">Repair Guru</h1>
           </Link>
-
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -62,37 +78,27 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+            {userRole === 'admin' && (
+              <Link to="/admin" className="text-base font-medium text-gray-700 transition-colors hover:text-brand-blue">
+                Dashboard
+              </Link>
+            )}
           </nav>
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <button
-              className="p-2 rounded-full bg-brand-blue text-white hover:bg-brand-darkBlue transition-all"
-              aria-label="Search"
-            >
+            <button className="p-2 rounded-full bg-brand-blue text-white hover:bg-brand-darkBlue transition-all" aria-label="Search">
               <Search className="w-5 h-5" />
             </button>
             <Button variant="primary">Hire Now &rarr;</Button>
-
-
-
-            <Link to="/auth/login" className="inline-flex items-center space-x-1 text-gray-700 hover:text-brand-blue transition-colors">
-              <UserPlus className="w-5 h-5" />
-              {/* <span className="font-medium">Register</span> */}
-            </Link>
+            <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all" onClick={handleUserClick} aria-label="User">
+              <User className="w-5 h-5 text-gray-700" />
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6 text-gray-700" />
-            ) : (
-              <Menu className="w-6 h-6 text-gray-700" />
-            )}
+          <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}>
+            {mobileMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
           </button>
         </div>
       </div>
@@ -107,32 +113,17 @@ const Navbar = () => {
                 to={link.path}
                 className={cn(
                   'text-base font-medium p-2 rounded',
-                  location.pathname === link.path
-                    ? 'bg-brand-blue/10 text-brand-blue'
-                    : 'text-gray-700 hover:bg-gray-100'
+                  location.pathname === link.path ? 'bg-brand-blue/10 text-brand-blue' : 'text-gray-700 hover:bg-gray-100'
                 )}
               >
                 {link.name}
               </Link>
             ))}
-            <div className="flex flex-col space-y-2 pt-2 border-t">
-              <Button variant="primary" fullWidth>Hire Now</Button>
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  to="/auth/login"
-                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                >
-                  <LogIn className="w-5 h-5 mr-2" />
-                  {/* <span>Login</span> */}
-                </Link>
-                <Link
-                  to="/auth/register"
-                  className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                >
-                  <UserPlus className="w-5 h-5 mr-2" />
-                  {/* <span>Register</span> */}
-                </Link>
-              </div>
+            <Button variant="primary" fullWidth>Hire Now</Button>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={handleUserClick} className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200">
+                <User className="w-5 h-5 mr-2" /> Profile
+              </button>
             </div>
           </nav>
         </div>

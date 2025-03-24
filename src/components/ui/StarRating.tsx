@@ -25,9 +25,9 @@ const StarRating = ({
     md: 'w-4 h-4',
     lg: 'w-5 h-5'
   };
-  
+
   const sizeClass = sizesMap[size];
-  
+
   return (
     <div className={cn('flex items-center', className)}>
       <div className="flex">
@@ -40,15 +40,15 @@ const StarRating = ({
               i < rating
                 ? 'text-yellow-400 fill-yellow-400'
                 : showEmpty
-                ? 'text-gray-300'
-                : 'hidden'
+                  ? 'text-gray-300'
+                  : 'hidden'
             )}
           />
         ))}
       </div>
-      {reviews !== undefined && (
+      {/* {reviews !== undefined && (
         <span className="ml-2 text-sm text-gray-600">({reviews})</span>
-      )}
+      )} */}
     </div>
   );
 };
