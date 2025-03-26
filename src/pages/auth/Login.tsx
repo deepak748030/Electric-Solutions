@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
@@ -7,14 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { LucideProps } from 'lucide-react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
+import { LightbulbIcon as LucideProps } from 'lucide-react';
 import axios from 'axios';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Custom Google icon since it's not available in lucide-react
-const GoogleIcon = (props: LucideProps) => (
+const GoogleIcon = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={props.size || 24}
@@ -33,34 +31,30 @@ const GoogleIcon = (props: LucideProps) => (
 );
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${API_URL}/users/login`, { email, password });
+      const res = await axios.post(`${API_URL}/users/login`, { mobile, password });
 
       if (res.data.success) {
         await localStorage.setItem('auth', JSON.stringify(res.data));
-        // console.log("data", res.data);
         navigate('/');
       } else {
         alert(res.data.message);
-
       }
-    } catch (error) {
+    } catch (error: any) {
       alert(error.response?.data?.message || 'Something went wrong!');
     }
   };
 
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Breadcrumb banner */}
-      <Navbar />
       <div className="bg-gray-800 text-white py-20 px-4 mt-20">
         <div className="container mx-auto">
           <h1 className="text-3xl font-bold mb-2">Login</h1>
@@ -75,22 +69,21 @@ const Login = () => {
       <div className="flex-grow flex items-center justify-center pb-20 pt-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader className="space-y-1 flex flex-col items-center text-center">
-            {/* <img src="/public/lovable-uploads/f4ff55b6-3170-4526-9347-e8eb769d7e87.png" alt="Repair Guru Logo" className="h-12 mb-4" /> */}
             <CardTitle className="text-2xl font-bold">Log In To Repair Guru</CardTitle>
             <CardDescription>
-              Welcome back! Login with your data you entered during registration
+              Welcome back! Login with your mobile number and password
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email*</Label>
+                <Label htmlFor="mobile">Mobile Number*</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="mobile"
+                  type="tel"
+                  placeholder="Enter your mobile number"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
                   required
                 />
               </div>
@@ -149,7 +142,6 @@ const Login = () => {
           </CardFooter>
         </Card>
       </div>
-      <Footer />
     </div>
   );
 };

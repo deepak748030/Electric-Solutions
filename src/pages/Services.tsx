@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/pagination"
 import axios from "axios"
 import { toast } from "sonner"
-
+// phone 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Services = () => {
@@ -82,7 +82,7 @@ const Services = () => {
         userId: userData?._id,
         customer: userData?.name,
         email: userData?.email,
-        phone: userData?.phone || "",
+        phone: userData?.mobile || "",
         service: service.title,
         price: parseInt(service.price.replace(/[^\d]/g, "")),
         date: new Date().toISOString(),
