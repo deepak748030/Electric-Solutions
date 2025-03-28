@@ -18,7 +18,19 @@ import {
     DialogClose,
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowRight, Pencil, Trash, Phone, MapPin, Package, Clock, Check, AlertTriangle, X } from "lucide-react"
+import {
+    ArrowRight,
+    Pencil,
+    Trash,
+    Phone,
+    MapPin,
+    Package,
+    Clock,
+    Check,
+    AlertTriangle,
+    X,
+    CreditCard,
+} from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
@@ -168,7 +180,7 @@ export default function UserOrders() {
 
         setIsLoading((prev) => ({ ...prev, orderAction: true }))
         try {
-            const res = await axios.delete(`/api/orders/${orderToDelete._id}`)
+            const res = await axios.delete(`${API_URL}/orders/${orderToDelete._id}`)
             if (res.data.success) {
                 setOrders(orders.filter((order) => order._id !== orderToDelete._id))
                 toast({
@@ -471,6 +483,7 @@ export default function UserOrders() {
                                                         <TableHead>Price</TableHead>
                                                         <TableHead>Date</TableHead>
                                                         <TableHead>Status</TableHead>
+                                                        <TableHead>Payment Method</TableHead>
                                                         <TableHead>Address</TableHead>
                                                         <TableHead>Actions</TableHead>
                                                     </TableRow>
@@ -489,6 +502,12 @@ export default function UserOrders() {
                                                                         {order.status}
                                                                     </span>
                                                                 </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <div className="flex items-center gap-1">
+                                                                    <CreditCard className="h-4 w-4 text-blue-600" />
+                                                                    <span>{order.paymentMethod}</span>
+                                                                </div>
                                                             </TableCell>
                                                             <TableCell className="max-w-xs truncate">{order.address}</TableCell>
                                                             <TableCell>
@@ -597,6 +616,11 @@ export default function UserOrders() {
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-sm font-medium">Price:</span>
                                                         <span className="text-sm">₹{order.price}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <CreditCard className="h-4 w-4 text-blue-600" />
+                                                        <span className="text-sm font-medium">Payment:</span>
+                                                        <span className="text-sm">Pay Online</span>
                                                     </div>
                                                     <div className="flex items-start gap-2">
                                                         <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
@@ -707,6 +731,10 @@ export default function UserOrders() {
                                 <div className="flex justify-between">
                                     <span className="font-medium">Price:</span>
                                     <span>₹{orderToDelete.price}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="font-medium">Payment Method:</span>
+                                    <span>{orderToDelete.paymentMethod}</span>
                                 </div>
                             </div>
                         )}

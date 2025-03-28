@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
 import { Link, useSearchParams, useNavigate } from "react-router-dom"
-import { Search, X } from "lucide-react"
+import { Search, X } from 'lucide-react'
 import Button from "@/components/common/Button"
 import {
   Pagination,
@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/pagination"
 import axios from "axios"
 import { toast } from "sonner"
-// phone 
+import RazorpayPayment from "../components/payment/razorpay-payment"
+
+// API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Services = () => {
@@ -29,6 +31,11 @@ const Services = () => {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [userData, setUserData] = useState<any | null>(null)
   const [bookingInProgress, setBookingInProgress] = useState(false)
+  const [showAddressModal, setShowAddressModal] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [selectedService, setSelectedService] = useState(null)
+  const [orderAddress, setOrderAddress] = useState("")
+  const [paymentMode, setPaymentMode] = useState("cod") // Default to cash on delivery
 
   // Get unique categories and locations from services
   const availableCategories = [...new Set(services.map(service => service.category))]
@@ -70,42 +77,88 @@ const Services = () => {
   const handleDirectBooking = async (service) => {
     if (bookingInProgress) return;
 
-    if (!userData) {
-      navigate("/auth/login")
-      return
+    if (!userData || !userData._id) {
+      navigate("/auth/login");
+      return;
     }
 
-    setBookingInProgress(true)
+    setSelectedService(service);
+
+    // Set initial address from user data
+    setOrderAddress(userData?.address || "");
+
+    // Show address confirmation modal
+    setShowAddressModal(true);
+  }
+
+  // Proceed to payment after address confirmation
+  const proceedToPayment = () => {
+    if (!orderAddress.trim()) {
+      toast.error("Please enter a delivery address");
+      return;
+    }
+
+    setShowAddressModal(false);
+    setShowPaymentModal(true);
+  }
+
+  // Complete booking process
+  const completeBooking = async (paymentDetails = null) => {
+    if (!selectedService || !userData?._id) return;
+
+    setBookingInProgress(true);
 
     try {
       const orderData = {
-        userId: userData?._id,
-        customer: userData?.name,
-        email: userData?.email,
-        phone: userData?.mobile || "",
-        service: service.title,
-        price: parseInt(service.price.replace(/[^\d]/g, "")),
+        userId: userData._id,
+        customer: userData.name,
+        phone: userData.mobile || "",
+        service: selectedService.title,
+        price: parseInt(selectedService.price.replace(/[^\d]/g, "")),
         date: new Date().toISOString(),
         status: "Pending",
-        address: userData?.address || ""
-      }
+        address: orderAddress,
+        paymentMode: paymentMode,
+        paymentDetails: paymentDetails || null
+      };
 
       await axios.post(`${API_URL}/orders`, orderData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      })
+      });
 
-      toast.success("Service booked successfully!")
+      toast.success("Service booked successfully!");
+      setShowPaymentModal(false);
     } catch (error) {
       if (error.response?.status === 401) {
-        navigate("/auth/login")
-        return
+        navigate("/auth/login");
+        return;
       }
-      toast.error(error.response?.data?.message || "Failed to book service")
+      toast.error(error.response?.data?.message || "Failed to book service");
     } finally {
-      setBookingInProgress(false)
+      setBookingInProgress(false);
     }
+  }
+
+  // Handle payment mode selection
+  const handlePaymentModeSelection = async (mode) => {
+    setPaymentMode(mode);
+
+    if (mode === "cod") {
+      // For cash on delivery, complete booking directly
+      await completeBooking();
+    }
+    // For online payment, the RazorpayPayment component will handle it
+  }
+
+  // Handle successful Razorpay payment
+  const handlePaymentSuccess = (paymentDetails) => {
+    completeBooking({
+      id: paymentDetails.razorpay_payment_id,
+      orderId: paymentDetails.razorpay_order_id,
+      signature: paymentDetails.razorpay_signature
+    });
   }
 
   // Get user data from local storage
@@ -115,10 +168,18 @@ const Services = () => {
       if (authData) {
         const parsedData = JSON.parse(authData)
         setUserData(parsedData?.user || null)
+
+        // If no user ID, redirect to login
+        if (!parsedData?.user?._id) {
+          navigate("/auth/login");
+        }
+      } else {
+        navigate("/auth/login");
       }
     } catch (error) {
       console.error('Error retrieving user data:', error)
       setUserData(null)
+      navigate("/auth/login");
     }
   }
 
@@ -434,6 +495,109 @@ const Services = () => {
           )}
         </div>
       </main>
+
+      {/* Address Modal */}
+      {showAddressModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Delivery Address</h2>
+              <button onClick={() => setShowAddressModal(false)} className="text-gray-500 hover:text-gray-700">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 mb-2">Please confirm or update your delivery address:</p>
+              <textarea
+                value={orderAddress}
+                onChange={(e) => setOrderAddress(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md"
+                rows={3}
+                placeholder="Enter your full address"
+              />
+            </div>
+
+            <Button
+              fullWidth
+              variant="primary"
+              className="bg-brand-blue text-white"
+              onClick={proceedToPayment}
+              disabled={!orderAddress.trim()}
+            >
+              Continue to Payment
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Select Payment Method</h2>
+              <button onClick={() => setShowPaymentModal(false)} className="text-gray-500 hover:text-gray-700">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onClick={() => handlePaymentModeSelection("cod")}>
+                <input
+                  type="radio"
+                  id="cod"
+                  name="payment"
+                  checked={paymentMode === "cod"}
+                  onChange={() => setPaymentMode("cod")}
+                  className="mr-3"
+                />
+                <label htmlFor="cod" className="flex-grow cursor-pointer">
+                  <p className="font-medium">Cash on Delivery</p>
+                  <p className="text-sm text-gray-500">Pay when your service is delivered</p>
+                </label>
+              </div>
+
+              <div className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onClick={() => handlePaymentModeSelection("online")}>
+                <input
+                  type="radio"
+                  id="online"
+                  name="payment"
+                  checked={paymentMode === "online"}
+                  onChange={() => setPaymentMode("online")}
+                  className="mr-3"
+                />
+                <label htmlFor="online" className="flex-grow cursor-pointer">
+                  <p className="font-medium">Pay Online</p>
+                  <p className="text-sm text-gray-500">Pay securely with Razorpay</p>
+                </label>
+              </div>
+            </div>
+
+            {paymentMode === "online" && selectedService && (
+              <RazorpayPayment
+                amount={parseInt(selectedService.price.replace(/[^\d]/g, ""))}
+                name={selectedService.title}
+                email={userData?.email}
+                phone={userData?.mobile}
+                onSuccess={handlePaymentSuccess}
+              />
+            )}
+
+            {paymentMode === "cod" && (
+              <Button
+                fullWidth
+                variant="primary"
+                className="bg-brand-blue text-white"
+                onClick={() => completeBooking()}
+                disabled={bookingInProgress}
+              >
+                {bookingInProgress ? "Processing..." : "Confirm Order"}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

@@ -15,7 +15,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Pencil, Phone, Mail, MapPin } from "lucide-react"
+import { Pencil, Phone, Mail, MapPin, CreditCard } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
@@ -24,7 +24,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([])
   const [editingOrder, setEditingOrder] = useState(null)
   const [filterStatus, setFilterStatus] = useState("all")
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api"
 
   const getOrders = async () => {
     try {
@@ -140,6 +140,7 @@ const Orders = () => {
                   <TableHead>Price</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Payment Method</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -160,6 +161,12 @@ const Orders = () => {
                       <Badge className={getStatusColor(order.status)} variant="outline">
                         {order.status}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <CreditCard className="h-4 w-4 text-muted-foreground" />
+                        <span>Pay Online</span>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <Dialog>
@@ -193,6 +200,10 @@ const Orders = () => {
                                 <div className="grid grid-cols-[100px_1fr] gap-2">
                                   <span className="text-sm font-medium text-muted-foreground">Price:</span>
                                   <span className="text-sm">${editingOrder.price}</span>
+                                </div>
+                                <div className="grid grid-cols-[100px_1fr] gap-2">
+                                  <span className="text-sm font-medium text-muted-foreground">Payment:</span>
+                                  <span className="text-sm">Pay Online</span>
                                 </div>
                               </div>
 
@@ -266,6 +277,11 @@ const Orders = () => {
                   <span className="text-sm font-medium">Price:</span>
                   <span className="text-sm">${order.price}</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Payment:</span>
+                  <span className="text-sm">Pay Online</span>
+                </div>
               </div>
 
               <div className="mt-4 space-y-2">
@@ -319,6 +335,10 @@ const Orders = () => {
                           <div className="grid grid-cols-[100px_1fr] gap-2">
                             <span className="text-sm font-medium text-muted-foreground">Price:</span>
                             <span className="text-sm">${editingOrder.price}</span>
+                          </div>
+                          <div className="grid grid-cols-[100px_1fr] gap-2">
+                            <span className="text-sm font-medium text-muted-foreground">Payment:</span>
+                            <span className="text-sm">Pay Online</span>
                           </div>
                         </div>
 
