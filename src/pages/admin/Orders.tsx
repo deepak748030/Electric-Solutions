@@ -165,7 +165,7 @@ const Orders = () => {
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <CreditCard className="h-4 w-4 text-muted-foreground" />
-                        <span>Pay Online</span>
+                        <span>{order.paymentMethod} </span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -203,7 +203,7 @@ const Orders = () => {
                                 </div>
                                 <div className="grid grid-cols-[100px_1fr] gap-2">
                                   <span className="text-sm font-medium text-muted-foreground">Payment:</span>
-                                  <span className="text-sm">Pay Online</span>
+                                  <span className="text-sm">{editingOrder.pyamentMethod}</span>
                                 </div>
                               </div>
 
@@ -280,7 +280,7 @@ const Orders = () => {
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Payment:</span>
-                  <span className="text-sm">Pay Online</span>
+                  <span className="text-sm">{order.paymentMethod}</span>
                 </div>
               </div>
 
@@ -338,7 +338,7 @@ const Orders = () => {
                           </div>
                           <div className="grid grid-cols-[100px_1fr] gap-2">
                             <span className="text-sm font-medium text-muted-foreground">Payment:</span>
-                            <span className="text-sm">Pay Online</span>
+                            <span className="text-sm">{editingOrder.paymentMethod}</span>
                           </div>
                         </div>
 
@@ -389,4 +389,3 @@ const Orders = () => {
 }
 
 export default Orders
-
