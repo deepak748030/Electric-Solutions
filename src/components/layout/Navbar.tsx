@@ -117,7 +117,7 @@ const Navbar = () => {
               </Link>
             ))}
             {userRole === 'admin' && (
-              <Link to="/admin" className="text-base font-medium text-gray-700 hover:text-brand-blue">Dashboard</Link>
+              <Link to="/admin" className="text-base font-medium text-gray-700 hover:text-brand-blue ps-2">Dashboard</Link>
             )}
             {/* <Button variant="primary" fullWidth>Hire Now</Button> */}
             <div className="grid grid-cols-2 gap-2">
