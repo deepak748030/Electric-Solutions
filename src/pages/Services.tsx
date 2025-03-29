@@ -14,7 +14,7 @@ import {
 import axios from "axios"
 import { toast } from "sonner"
 import RazorpayPayment from "../components/payment/razorpay-payment"
-
+//  enter your full address 
 // API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -514,7 +514,7 @@ const Services = () => {
                 onChange={(e) => setOrderAddress(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md"
                 rows={3}
-                placeholder="Enter your full address"
+                placeholder="Enter your full address & mobile"
               />
             </div>
 

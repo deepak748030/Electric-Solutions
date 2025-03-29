@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import RazorpayPayment from '@/components/payment/razorpay-payment';
-
+// Enter your full address 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const PopularServices = () => {
@@ -189,7 +189,7 @@ const PopularServices = () => {
                   onChange={(e) => setOrderAddress(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   rows={3}
-                  placeholder="Enter your full address"
+                  placeholder="Enter your full address & mobile"
                 />
               </div>
 

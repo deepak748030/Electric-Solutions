@@ -38,7 +38,7 @@ import { toast } from "@/components/ui/use-toast"
 import { useNavigate } from "react-router-dom"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
-// img 
+
 export default function UserOrders() {
     const API_URL = import.meta.env.VITE_API_URL
 

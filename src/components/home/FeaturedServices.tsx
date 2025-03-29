@@ -189,7 +189,7 @@ const FeaturedServices = () => {
                   onChange={(e) => setOrderAddress(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   rows={3}
-                  placeholder="Enter your full address & Phone number"
+                  placeholder="Enter your full address & mobile"
                 />
               </div>
 
