@@ -109,7 +109,7 @@ const Login = () => {
                   <Label htmlFor="remember" className="text-sm cursor-pointer">Remember Me</Label>
                 </div>
                 <Link to="/auth/forgot-password" className="text-sm text-brand-blue hover:underline">
-                  Forgot Password?
+                  {/* Forgot Password? */}
                 </Link>
               </div>
 
