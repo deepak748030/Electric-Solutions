@@ -48,7 +48,7 @@ const ServiceCard = ({
           Featured
         </div>
         <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-brand-blue text-sm font-bold px-3 py-1 rounded-full">
-          {price}
+          ₹{price}
         </div>
       </div>
       <div className="p-5">

@@ -517,7 +517,7 @@ const Services = () => {
                       <p className="font-medium">{service.title}</p>
                     </TableCell>
                     <TableCell>{service.category}</TableCell>
-                    <TableCell>{service.price}</TableCell>
+                    <TableCell>₹{service.price}</TableCell>
                     <TableCell>
                       <span className="capitalize">{service.type}</span>
                     </TableCell>
@@ -821,7 +821,7 @@ const Services = () => {
                       Category: <span className="font-medium">{service.category}</span>
                     </p>
                     <p className="text-sm text-gray-500">
-                      Price: <span className="font-medium">{service.price}</span>
+                      Price: <span className="font-medium">₹{service.price}</span>
                     </p>
                     <p className="text-sm text-gray-500">
                       Type: <span className="font-medium capitalize">{service.type}</span>

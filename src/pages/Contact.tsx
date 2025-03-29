@@ -8,7 +8,7 @@ import Button from '@/components/common/Button';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
-
+//  support
 const Contact = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -93,8 +93,8 @@ const Contact = () => {
                   <Mail className="h-6 w-6" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Email</h3>
-                <p className="text-gray-600">support@repairingbuddy.com</p>
-                <a href="mailto:support@repairingbuddy.com" className="text-brand-blue hover:underline mt-2">
+                <p className="text-gray-600">support@ElectricSolutions.com</p>
+                <a href="mailto:support@.com" className="text-brand-blue hover:underline mt-2">
                   Send an email
                 </a>
               </div>

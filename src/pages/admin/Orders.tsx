@@ -155,7 +155,7 @@ const Orders = () => {
                       </div>
                     </TableCell>
                     <TableCell>{order.service}</TableCell>
-                    <TableCell>${order.price}</TableCell>
+                    <TableCell>₹{order.price}</TableCell>
                     <TableCell>{formatDate(order.date)}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(order.status)} variant="outline">
@@ -199,7 +199,7 @@ const Orders = () => {
                                 </div>
                                 <div className="grid grid-cols-[100px_1fr] gap-2">
                                   <span className="text-sm font-medium text-muted-foreground">Price:</span>
-                                  <span className="text-sm">${editingOrder.price}</span>
+                                  <span className="text-sm">₹{editingOrder.price}</span>
                                 </div>
                                 <div className="grid grid-cols-[100px_1fr] gap-2">
                                   <span className="text-sm font-medium text-muted-foreground">Payment:</span>
@@ -275,7 +275,7 @@ const Orders = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">Price:</span>
-                  <span className="text-sm">${order.price}</span>
+                  <span className="text-sm">₹{order.price}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
@@ -334,7 +334,7 @@ const Orders = () => {
                           </div>
                           <div className="grid grid-cols-[100px_1fr] gap-2">
                             <span className="text-sm font-medium text-muted-foreground">Price:</span>
-                            <span className="text-sm">${editingOrder.price}</span>
+                            <span className="text-sm">₹{editingOrder.price}</span>
                           </div>
                           <div className="grid grid-cols-[100px_1fr] gap-2">
                             <span className="text-sm font-medium text-muted-foreground">Payment:</span>

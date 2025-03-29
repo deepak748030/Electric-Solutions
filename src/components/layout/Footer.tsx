@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowUp, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
+// repair 
 const Footer = () => {
   const scrollToTop = () => {
     window.scrollTo({
@@ -122,7 +122,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="text-center mt-12 text-gray-400 text-sm">
-          <p>© {new Date().getFullYear()} Repair Buddy. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Electric Solution. All rights reserved.</p>
           <div className="flex justify-center gap-4 mt-2">
             <a href="#" className="hover:text-brand-blue transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-brand-blue transition-colors">Terms of Service</a>

@@ -7,6 +7,8 @@ import { ArrowRight, Clock, MapPin, Phone, Star, Check } from 'lucide-react';
 import Button from '@/components/common/Button';
 import Reviews from '@/components/home/Reviews';
 
+//  
+
 const About = () => {
   return (
     <div className="min-h-screen flex flex-col">
@@ -33,7 +35,7 @@ const About = () => {
               <div className="order-2 md:order-1 animate-fade-in">
                 {/* <h1 className="text-4xl md:text-5xl font-bold mb-6">About Us</h1> */}
                 <h2 className="text-xl md:text-2xl text-brand-blue font-semibold mb-4">
-                  RepairingBuddy.com: Your Trusted Home Appliance Repair Partner
+                  ElectricSolutions.com: Your Trusted Home Appliance Repair Partner
                 </h2>
                 <p className="text-gray-700 mb-6">
                   In today's fast-paced world, home appliances play a vital role in making our lives easier
@@ -54,7 +56,7 @@ const About = () => {
                 <div className="relative">
                   <img
                     src="/public/lovable-uploads/d2bdb4e4-28b6-4d6d-97ae-1f356bc7cd37.png"
-                    alt="About RepairingBuddy"
+                    alt="About ElectricSolutions"
                     className="rounded-lg shadow-xl max-w-full h-auto"
                   />
                   <div className="absolute -bottom-6 -left-6 bg-white rounded-lg shadow-lg p-4 flex items-center gap-2">
@@ -140,7 +142,7 @@ const About = () => {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-in">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">Why Choose Repairing Buddy:</h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Why Choose Electric Solutions:</h2>
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="bg-green-100 p-1 rounded mt-1">
@@ -195,7 +197,7 @@ const About = () => {
 
                 <div className="mt-8 p-4 border-l-4 border-brand-blue bg-blue-50 rounded-r-lg">
                   <p className="text-gray-700">
-                    <span className="text-brand-blue font-semibold">Find Us:</span> Visit our website www.repairingbuddy.com or give us a call at +91 9560457131. Our team is ready to make your appliances and gadgets smile again!
+                    <span className="text-brand-blue font-semibold">Find Us:</span> Visit our website www.ElectricSolutions.com or give us a call at +91 9560457131. Our team is ready to make your appliances and gadgets smile again!
                   </p>
                 </div>
               </div>
@@ -203,7 +205,7 @@ const About = () => {
               <div className="grid grid-cols-1 gap-8">
                 <img
                   src="/public/lovable-uploads/4a6ac531-74d9-48b7-bddd-7657fe15a950.png"
-                  alt="Why Choose RepairingBuddy"
+                  alt="Why Choose ElectricSolutions"
                   className="rounded-lg shadow-lg w-full max-w-md mx-auto"
                 />
 
