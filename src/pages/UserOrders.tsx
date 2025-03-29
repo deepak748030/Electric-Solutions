@@ -38,7 +38,7 @@ import { toast } from "@/components/ui/use-toast"
 import { useNavigate } from "react-router-dom"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
-
+// img 
 export default function UserOrders() {
     const API_URL = import.meta.env.VITE_API_URL
 
@@ -323,13 +323,13 @@ export default function UserOrders() {
                             <CardContent className="p-6">
                                 {!isEditingProfile ? (
                                     <div className="flex flex-col md:flex-row items-center gap-6">
-                                        <div className="rounded-full overflow-hidden h-24 w-24 bg-white border-4 border-blue-100">
+                                        {/* <div className="rounded-full overflow-hidden h-24 w-24 bg-white border-4 border-blue-100">
                                             <img
                                                 src={profile.avatar || "/placeholder.svg?height=200&width=200"}
                                                 alt={profile.name}
                                                 className="h-full w-full object-cover"
                                             />
-                                        </div>
+                                        </div> */}
                                         <div className="flex-1 text-center md:text-left">
                                             <h2 className="text-2xl font-bold">{profile.name}</h2>
                                             <div className="flex flex-col md:flex-row gap-4 mt-2 text-gray-600">
@@ -620,7 +620,7 @@ export default function UserOrders() {
                                                     <div className="flex items-center gap-2">
                                                         <CreditCard className="h-4 w-4 text-blue-600" />
                                                         <span className="text-sm font-medium">Payment:</span>
-                                                        <span className="text-sm">Pay Online</span>
+                                                        <span className="text-sm">{order.paymentMethod}</span>
                                                     </div>
                                                     <div className="flex items-start gap-2">
                                                         <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />

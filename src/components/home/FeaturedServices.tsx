@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import RazorpayPayment from '@/components/payment/razorpay-payment';
 
 const API_URL = import.meta.env.VITE_API_URL;
-
+// enter your full 
 const FeaturedServices = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState([]);
@@ -189,7 +189,7 @@ const FeaturedServices = () => {
                   onChange={(e) => setOrderAddress(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   rows={3}
-                  placeholder="Enter your full address"
+                  placeholder="Enter your full address & Phone number"
                 />
               </div>
 

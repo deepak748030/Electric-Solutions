@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, X, LogIn, UserPlus } from 'lucide-react';
+import { User, Menu, X, LogIn, UserPlus } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { cn } from '@/lib/utils';
 
@@ -59,7 +59,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-brand-blue">Repair Guru</h1>
+            <img src="/logo.png" alt="Logo" className="h-10" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -87,10 +87,7 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <button className="p-2 rounded-full bg-brand-blue text-white hover:bg-brand-darkBlue transition-all" aria-label="Search">
-              <Search className="w-5 h-5" />
-            </button>
-            <Button variant="primary">Hire Now &rarr;</Button>
+            {/* <Button variant="primary">Hire Now &rarr;</Button> */}
             <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all" onClick={handleUserClick} aria-label="User">
               <User className="w-5 h-5 text-gray-700" />
             </button>
@@ -119,6 +116,9 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+            {userRole === 'admin' && (
+              <Link to="/admin" className="text-base font-medium text-gray-700 hover:text-brand-blue">Dashboard</Link>
+            )}
             <Button variant="primary" fullWidth>Hire Now</Button>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={handleUserClick} className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200">
