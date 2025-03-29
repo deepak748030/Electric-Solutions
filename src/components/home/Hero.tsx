@@ -51,7 +51,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-white z-[-1]"></div>
       {/* Centered Logo */}
       <div className="flex justify-center items-center">
-        <img src="/logo.png" alt="Logo" className="h-24" />
+        <img src="/logo.png" alt="Logo" className="h-28" />
       </div>
 
       <div className="container mx-auto px-4">
