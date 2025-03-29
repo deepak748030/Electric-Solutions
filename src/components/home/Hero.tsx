@@ -47,8 +47,12 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative pt-32 pb-16 md:pt-40 md:pb-24">
+    <section className="relative pt-16 pb-16 md:pt-40 md:pb-24">
       <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-white z-[-1]"></div>
+      {/* Centered Logo */}
+      <div className="flex justify-center items-center">
+        <img src="/logo.png" alt="Logo" className="h-24" />
+      </div>
 
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in">
