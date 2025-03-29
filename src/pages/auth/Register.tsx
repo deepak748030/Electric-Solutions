@@ -213,19 +213,8 @@ const Register = () => {
               </Button>
             </form>
 
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-4 text-sm text-gray-500">OR</span>
-              </div>
-            </div>
 
-            <Button variant="outline" className="w-full" type="button">
-              <GoogleIcon className="mr-2 h-4 w-4" />
-              Sign In With Google
-            </Button>
+
           </CardContent>
           <CardFooter className="flex justify-center">
             <p className="text-sm text-gray-600">

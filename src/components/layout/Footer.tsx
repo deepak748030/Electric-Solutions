@@ -23,7 +23,7 @@ const Footer = () => {
       {/* Scroll to Top Button */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex justify-center">
-          <Button 
+          <Button
             onClick={scrollToTop}
             className="bg-brand-blue hover:bg-brand-darkBlue text-white rounded-full p-3 transform -translate-y-1/2 shadow-lg hover:shadow-xl transition-all"
           >
@@ -39,7 +39,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">About Us</h3>
             <p className="text-gray-300">
-              We provide expert repair services for your home appliances and electronics, 
+              We provide expert repair services for your home appliances and electronics,
               committed to quality service with trained professionals.
             </p>
             <div className="flex space-x-4 pt-4">
@@ -103,14 +103,14 @@ const Footer = () => {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-12 border-t border-gray-700 pt-8">
+        {/* <div className="mt-12 border-t border-gray-700 pt-8">
           <div className="max-w-xl mx-auto text-center">
             <h3 className="text-xl font-bold mb-4">Subscribe to Our Newsletter</h3>
             <p className="text-gray-300 mb-4">Stay updated with our latest services and offers</p>
             <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
+              <input
+                type="email"
+                placeholder="Your email address"
                 className="px-4 py-2 rounded-md flex-grow bg-gray-800 border border-gray-700 text-white"
               />
               <Button className="bg-brand-blue hover:bg-brand-darkBlue text-white">
@@ -118,7 +118,7 @@ const Footer = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Copyright */}
         <div className="text-center mt-12 text-gray-400 text-sm">
