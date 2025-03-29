@@ -119,7 +119,7 @@ const Navbar = () => {
             {userRole === 'admin' && (
               <Link to="/admin" className="text-base font-medium text-gray-700 hover:text-brand-blue">Dashboard</Link>
             )}
-            <Button variant="primary" fullWidth>Hire Now</Button>
+            {/* <Button variant="primary" fullWidth>Hire Now</Button> */}
             <div className="grid grid-cols-2 gap-2">
               <button onClick={handleUserClick} className="p-2 rounded bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200">
                 <User className="w-5 h-5 mr-2" /> Profile
