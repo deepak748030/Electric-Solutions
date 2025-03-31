@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator"
 import type { LightbulbIcon as LucideProps } from "lucide-react"
 import axios from "axios"
+import Navbar from "@/components/layout/Navbar"
+import Footer from "@/components/layout/Footer"
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api"
 // Custom Google icon since it's not available in lucide-react
 const GoogleIcon = (props) => (
@@ -115,6 +117,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Breadcrumb banner */}
+      <Navbar />
       <div className="bg-gray-800 text-white py-10 px-4 mt-16">
         <div className="container mx-auto">
           <h1 className="text-3xl font-bold mb-2">Register</h1>
@@ -226,6 +229,7 @@ const Register = () => {
           </CardFooter>
         </Card>
       </div>
+      <Footer />
     </div>
   )
 }

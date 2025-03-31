@@ -8,6 +8,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { LightbulbIcon as LucideProps } from 'lucide-react';
 import axios from 'axios';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -55,6 +57,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Breadcrumb banner */}
+      <Navbar />
       <div className="bg-gray-800 text-white py-20 px-4 mt-20">
         <div className="container mx-auto">
           <h1 className="text-3xl font-bold mb-2">Login</h1>
@@ -130,6 +133,7 @@ const Login = () => {
           </CardFooter>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 };
