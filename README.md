@@ -95,15 +95,6 @@ Electric Solutions is a modern web application built with React and TypeScript t
 ### 🖥️ **Live Application**
 Experience the platform: **[electric-solutions.vercel.app](https://electric-solutions.vercel.app/)**
 
-### 📱 **Key Screenshots**
-
-<div align="center">
-  <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop" alt="Homepage" width="45%">
-  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=400&fit=crop" alt="Services" width="45%">
-</div>
-
----
-
 ## 🛠️ **Tech Stack**
 
 <div align="center">
